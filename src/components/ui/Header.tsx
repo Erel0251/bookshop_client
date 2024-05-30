@@ -1,3 +1,5 @@
+import { TextField } from '@mui/material';
+
 function Header() {
   return (
     <header className="header">
@@ -5,19 +7,15 @@ function Header() {
         <img src="./src/assets/images/book.jpg" alt="logo" />
         <div>BookWorm</div>
       </section>
-      <section className="header__search">
-        <form action="#">
-          <input type="search" placeholder="Search for books" />
-        </form>
-      </section>
+      <TextField id="outlined-basic" label="Outlined" variant="outlined" />
       <section className="header__navigation">
-        <a href="#">All Book</a>
-        <a href="#">Sale</a>
+        <a href="#">Home</a>
+        <a href="#">Shop</a>
         <a href="#">About</a>
       </section>
 
       <section className="header__cart">
-        <div>Cart</div>
+        <div>Cart (0)</div>
       </section>
     </header>
   );
