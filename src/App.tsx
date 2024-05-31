@@ -6,10 +6,19 @@ import Shop from './pages/Shop';
 import Cart from './pages/Cart';
 import Product from './pages/Product';
 import About from './pages/About';
+import NotFound from './pages/NotFound';
+import { Box } from '@mui/material';
 
 function App() {
   return (
-    <>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      }}
+    >
       <BrowserRouter>
         <Header />
         <Routes>
@@ -18,10 +27,11 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/product" element={<Product />} />
           <Route path="/about" element={<About />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
       </BrowserRouter>
-    </>
+    </Box>
   );
 }
 
