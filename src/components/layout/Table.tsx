@@ -10,7 +10,7 @@ export default function DataTable() {
       currency,
     });
 
-  const onClickMinus = (row) => {
+  const onClickMinus = (row: any) => {
     const quantity = document.getElementById(
       `quantity${row.id}`,
     ) as HTMLInputElement;
@@ -18,7 +18,7 @@ export default function DataTable() {
     quantity.value = row.quantity.toString();
   };
 
-  const onClickPlus = (row) => {
+  const onClickPlus = (row: any) => {
     const quantity = document.getElementById(
       `quantity${row.id}`,
     ) as HTMLInputElement;
