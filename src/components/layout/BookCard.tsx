@@ -9,10 +9,10 @@ import {
 import { Book } from '../../types/Book';
 
 function BookCard({ book }: { book: Book }) {
-  const formatPrice = (book: Book) =>
-    book.price.toLocaleString('vi-VN', {
+  const formatPrice = (price: number, currency: string) =>
+    price.toLocaleString('vi-VN', {
       style: 'currency',
-      currency: book.currency,
+      currency,
     });
 
   const formatName = (name: string) => {
@@ -57,12 +57,20 @@ function BookCard({ book }: { book: Book }) {
           gap: '0.5rem',
         }}
       >
-        <Typography className="card__originalPrice">
-          {formatPrice(book)}
-        </Typography>
-        <Typography variant="h5" color={'primary.light'}>
-          {formatPrice(book)}
-        </Typography>
+        {book.sale_price ? (
+          <>
+            <Typography className="card__originalPrice">
+              {formatPrice(book.price, book.currency)}
+            </Typography>
+            <Typography variant="h5" color={'primary.light'}>
+              {formatPrice(book.sale_price, book.currency)}
+            </Typography>
+          </>
+        ) : (
+          <Typography variant="h5" color={'primary.light'}>
+            {formatPrice(book.price, book.currency)}
+          </Typography>
+        )}
       </CardContent>
       <CardActions className="card__action">
         <Button variant="contained" size="medium" color="primary" fullWidth>

@@ -14,9 +14,24 @@ const BOOK_QUERY = gql`
       publisher
       img_urls
       price
+      sale_price
       status
       currency
       inventory
+    }
+    promotionType {
+      name
+      type
+      promotion_books {
+        id
+        book_id
+        name
+        author
+        publisher
+        price
+        discount
+        price
+      }
     }
   }
 `;
@@ -41,12 +56,24 @@ function Home() {
   return (
     <Box className="body">
       <Container>
-        <Typography variant="h4" gutterBottom style={{ marginTop: '2rem' }}>
-          Featured Books
-        </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'baseline',
+            marginTop: '2rem',
+          }}
+        >
+          <Typography variant="h4" gutterBottom>
+            Featured Books
+          </Typography>
+          <Typography variant="body2" color="primary">
+            View all
+          </Typography>
+        </Box>
         <Grid container spacing={2}>
           {data.books.map((launch: Book, index: number) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
+            <Grid item xs={6} sm={4} md={3} key={index}>
               <BookCard book={launch} />
             </Grid>
           ))}

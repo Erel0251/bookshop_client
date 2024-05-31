@@ -5,6 +5,7 @@ export interface Book {
   publisher: string;
   img_urls: string[];
   price: number;
+  sale_price: number;
   status: string;
   currency: string;
   inventory: number;

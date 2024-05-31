@@ -1,23 +1,51 @@
-import { TextField } from '@mui/material';
+import { ShoppingCart } from '@mui/icons-material';
+import {
+  AppBar,
+  Badge,
+  Box,
+  Button,
+  CssBaseline,
+  IconButton,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 
 function Header() {
   return (
-    <header className="header">
-      <section className="header__logo">
-        <img src="./src/assets/images/book.jpg" alt="logo" />
-        <div>BookWorm</div>
-      </section>
-      <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-      <section className="header__navigation">
-        <a href="#">Home</a>
-        <a href="#">Shop</a>
-        <a href="#">About</a>
-      </section>
-
-      <section className="header__cart">
-        <div>Cart (0)</div>
-      </section>
-    </header>
+    <>
+      <AppBar className="header">
+        <CssBaseline>
+          <Toolbar
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              width: '100%',
+            }}
+          >
+            <Typography variant="h6" component="div">
+              BookWorm
+            </Typography>
+            <Box>
+              <Button color="inherit" href="/">
+                Home
+              </Button>
+              <Button color="inherit" href="/shop">
+                Shop
+              </Button>
+              <Button color="inherit" href="/about">
+                About
+              </Button>
+            </Box>
+            <IconButton color="inherit" href="/cart">
+              <Badge badgeContent={4} max={10} color="warning">
+                <ShoppingCart />
+              </Badge>
+            </IconButton>
+          </Toolbar>
+        </CssBaseline>
+      </AppBar>
+      <Toolbar />
+    </>
   );
 }
 

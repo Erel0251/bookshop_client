@@ -38,7 +38,9 @@ a {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -83,9 +85,6 @@ button {
 }
 
 .header {
-  background-color: $quaternary;
-  color: $text;
-  padding: 1rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -155,6 +154,7 @@ button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 1rem;
   gap: 2rem;
   padding-bottom: 2rem;
   background-color: $quaternary;
