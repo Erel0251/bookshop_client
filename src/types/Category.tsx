@@ -1,10 +1,10 @@
 import { Book } from './Book';
 
 export interface Category {
-  id: number;
-  name: string;
+  id?: number;
+  name?: string;
   description?: string;
-  books: Book[];
+  books?: Book[];
   father?: Category;
   children?: Category[];
 }
