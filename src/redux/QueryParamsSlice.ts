@@ -29,5 +29,6 @@ const queryParamsSlice = createSlice({
   },
 });
 
-export const { setQueryParam, resetQueryParams } = queryParamsSlice.actions;
+export const { setQueryParam, setQueryParams, resetQueryParams } =
+  queryParamsSlice.actions;
 export default queryParamsSlice.reducer;

@@ -9,60 +9,17 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setQueryParam } from '../../queries/queryParamsSlice';
+import { setQueryParam, setQueryParams } from '../../redux/QueryParamsSlice';
 
-/*
-const sortBys = [
-  {
-    label: 'on sale',
-    value: {
-      onSale: true,
-    },
-  },
-  {
-    label: 'newest',
-    value: {
-      sortBy: 'createdAt',
-      order: 'DESC',
-    },
-  },
-  {
-    label: 'oldest',
-    value: {
-      sortBy: 'created_at',
-      order: 'ASC',
-    },
-  },
-  {
-    label: 'price: low to high',
-    value: {
-      sortBy: 'price',
-      order: 'ASC',
-    },
-  },
-  {
-    label: 'price: high to low',
-    value: {
-      sortBy: 'price',
-      order: 'DESC',
-    },
-  },
-  {
-    label: 'rating: high to low',
-    value: {
-      sortBy: 'rating',
-      order: 'DESC',
-    },
-  },
-  {
-    label: 'rating: low to high',
-    value: {
-      sortBy: 'rating',
-      order: 'ASC',
-    },
-  },
+const sortingOptions = [
+  { label: 'Popular', type: 'popular', sortBy: null, order: null },
+  { label: 'Recommend', type: 'recommend', sortBy: null, order: null },
+  { label: 'Newest', type: null, sortBy: 'created_at', order: 'DESC' },
+  { label: 'Oldest', type: null, sortBy: 'created_at', order: 'ASC' },
+  { label: 'Price Low to High', type: null, sortBy: 'price', order: 'ASC' },
+  { label: 'Price High to Low', type: null, sortBy: 'price', order: 'DESC' },
 ];
-*/
+
 const shows = [5, 20, 50, 100];
 
 function SortBook({
@@ -74,23 +31,23 @@ function SortBook({
   offset: number;
   limit: number;
 }) {
-  //const [sortBy, setSortBy] = useState('');
+  const [sortBy, setSortBy] = useState('Newest');
   const [show, setShow] = useState(20);
 
   const dispatch = useDispatch();
 
-  /*
-  const handleChange = (event: SelectChangeEvent) => {
-    const { name, value } = event.target;
-    dispatch(setQueryParam({ name, value }));
-  };
-  */
-
-  /*
   const handleSortChange = (event: SelectChangeEvent) => {
-    setSortBy(event.target.value);
+    const value = event.target.value;
+    setSortBy(value);
+
+    const sortOption = sortingOptions.find((option) => option.label === value);
+    dispatch(
+      setQueryParams({
+        sortBy: sortOption?.sortBy,
+        order: sortOption?.order,
+      }),
+    );
   };
-  */
 
   const handleShowChange = (event: SelectChangeEvent) => {
     const value = +event.target.value;
@@ -118,6 +75,16 @@ function SortBook({
           gap: '1rem',
         }}
       >
+        <FormControl sx={{ m: 1, minWidth: 180 }}>
+          <InputLabel>Sort By</InputLabel>
+          <Select value={sortBy} onChange={handleSortChange} label="Sort By">
+            {sortingOptions.map((option, index) => (
+              <MenuItem key={index} value={option.label}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <FormControl sx={{ m: 1, minWidth: 80 }}>
           <InputLabel id="show-label">Show</InputLabel>
           <Select

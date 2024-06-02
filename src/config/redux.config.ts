@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import queryParamsSlice from '../queries/queryParamsSlice';
+import queryParamsSlice from '../redux/QueryParamsSlice';
+//import addToCard from '../redux/AddToCard';
 
 const store = configureStore({
   reducer: {
     queryParams: queryParamsSlice,
+    //addToCard: addToCard,
   },
 });
 
