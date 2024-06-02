@@ -23,11 +23,17 @@ import {
 } from '@mui/material';
 import Link from '@mui/material/Link';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { DETAIL_BOOK_QUERY } from '../queries/book-query';
+import { useQuery } from '@apollo/client';
+import { Book } from '../types/Book';
+import { formatName, formatPrice } from '../utils/Format.helper';
+import { Review } from '../types/Review';
 
 function CategoryBreadcrumb() {
   return (
     <div role="presentation">
-      <Breadcrumbs aria-label="breadcrumb">
+      <Breadcrumbs>
         <Link underline="hover" color="inherit" href="/">
           IT Book
         </Link>
@@ -44,7 +50,7 @@ function CategoryBreadcrumb() {
   );
 }
 
-function BookDetail() {
+function BookDetail({ book }: { book: Book }) {
   return (
     <Card
       variant="outlined"
@@ -59,12 +65,12 @@ function BookDetail() {
         <CardMedia
           component="img"
           width="300"
-          image="https://marketplace.canva.com/EAFaQMYuZbo/1/0/1003w/canva-brown-rusty-mystery-novel-book-cover-hG1QhA7BiBU.jpg"
-          alt="Image"
+          image={book.img_urls[0]}
+          alt={book.title}
         />
         <CardContent>
           <Typography variant="h6" gutterBottom>
-            By (author) Someone
+            {formatName(book.author ?? book.publisher)}
           </Typography>
         </CardContent>
       </Box>
@@ -74,17 +80,10 @@ function BookDetail() {
         <CardContent>
           <Container>
             <Typography variant="h4" gutterBottom>
-              Book Title
+              {formatName(book.title)}
             </Typography>
             <Typography variant="body1" gutterBottom>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Suspendisse nulla ante, vulputate eget erat id, imperdiet ultrices
-              felis. Donec lobortis ullamcorper diam. Quisque lacinia fringilla
-              pellentesque. Aenean pretium id est nec dapibus. Cras ullamcorper
-              gravida urna sit amet facilisis. Phasellus ultrices urna a gravida
-              hendrerit. Donec augue purus, sagittis eget dolor vel, vulputate
-              tempus lacus. Morbi hendrerit sagittis diam, maximus lobortis
-              felis. Sed sed dolor vitae nisi ornare commodo in sed nunc.
+              {book.overview}
             </Typography>
           </Container>
         </CardContent>
@@ -93,7 +92,10 @@ function BookDetail() {
   );
 }
 
-function AddToCart() {
+function AddToCart({ book }: { book: Book }) {
+  const paid = book.sale_price ?? book.price;
+  const original = book.sale_price ? book.price : undefined;
+
   return (
     <Card variant="outlined">
       <CardContent
@@ -105,15 +107,17 @@ function AddToCart() {
           bgcolor: '#e0e0ee',
         }}
       >
-        <Typography
-          variant="h6"
-          color={'gray'}
-          sx={{ textDecoration: 'line-through' }}
-        >
-          $49.99
-        </Typography>
+        {original && (
+          <Typography
+            variant="h6"
+            color={'gray'}
+            sx={{ textDecoration: 'line-through' }}
+          >
+            {formatPrice(original, book.currency)}
+          </Typography>
+        )}
         <Typography variant="h4" fontWeight={900} color={'dark'}>
-          $29.99
+          {formatPrice(paid, book.currency)}
         </Typography>
       </CardContent>
       <Container
@@ -189,14 +193,29 @@ function Summary() {
   );
 }
 
-function Review() {
+function TempReview() {
   return (
     <Box>
-      <CardHeader title="Review" subheader="5 Star" />
+      <CardHeader title="Review Title" subheader="5 Star" />
       <CardContent>
         <Typography variant="body1" gutterBottom>
           Cras quam dui, tempus et elementum sed, malesuada rhoncus ligula.
           Curabitur tristique vehicula lacus. Sed ut neque odio
+        </Typography>
+        <Typography variant="body2">April 22, 2024</Typography>
+      </CardContent>
+      <Divider />
+    </Box>
+  );
+}
+
+function ReviewCard({ review }: { review: Review }) {
+  return (
+    <Box>
+      <CardHeader title={review.title} subheader={`${review.rating} Star`} />
+      <CardContent>
+        <Typography variant="body1" gutterBottom>
+          {review.comment}
         </Typography>
         <Typography variant="body2">April 22, 2024</Typography>
       </CardContent>
@@ -275,7 +294,7 @@ function SortFilter() {
   );
 }
 
-function Reviewers() {
+function Reviewers({ reviews }: { reviews?: Review[] }) {
   return (
     <Card
       variant="outlined"
@@ -289,12 +308,11 @@ function Reviewers() {
     >
       <Summary />
       <SortFilter />
-      <Review />
-      <Review />
-      <Review />
-      <Review />
-      <Review />
-
+      {reviews && reviews.map((review) => <ReviewCard review={review} />)}
+      <TempReview />
+      <TempReview />
+      <TempReview />
+      <TempReview />
       <Pagination count={10} shape="rounded" />
     </Card>
   );
@@ -348,6 +366,15 @@ function WriteReview() {
 }
 
 function Product() {
+  const { id } = useParams();
+
+  const { data, loading, error } = useQuery(DETAIL_BOOK_QUERY, {
+    variables: { id },
+  });
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error :{error.message}</p>;
+
   return (
     <Box className="body">
       <Container>
@@ -359,13 +386,13 @@ function Product() {
             <Divider />
           </Grid>
           <Grid item xs={8}>
-            <BookDetail />
+            <BookDetail book={data.book} />
           </Grid>
           <Grid item xs={4}>
-            <AddToCart />
+            <AddToCart book={data.book} />
           </Grid>
           <Grid item xs={8}>
-            <Reviewers />
+            <Reviewers reviews={data.book.reviews} />
           </Grid>
           <Grid item xs={4}>
             <WriteReview />
