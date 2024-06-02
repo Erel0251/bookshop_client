@@ -4,27 +4,27 @@ import {
   CardActions,
   CardContent,
   CardMedia,
+  SelectChangeEvent,
   Typography,
 } from '@mui/material';
 import { Book } from '../../types/Book';
+import { useNavigate } from 'react-router-dom';
+import { formatName, formatPrice } from '../../utils/Format.helper';
 
 function BookCard({ book }: { book: Book }) {
-  const formatPrice = (price: number, currency: string) =>
-    price.toLocaleString('vi-VN', {
-      style: 'currency',
-      currency,
-    });
+  const navigate = useNavigate();
 
-  const formatName = (name: string) => {
-    return name
-      .replace(/_/g, ' ')
-      .split(' ')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+  const onAddToCart = (e: SelectChangeEvent) => {
+    e.stopPropagation();
+    console.log('Add to cart');
+  };
+
+  const onViewDetail = () => {
+    navigate(`/product/${book.id}`);
   };
 
   return (
-    <Card className="card">
+    <Card className="card" onClick={onViewDetail}>
       <CardMedia
         component="img"
         height={300}
@@ -73,7 +73,13 @@ function BookCard({ book }: { book: Book }) {
         )}
       </CardContent>
       <CardActions className="card__action">
-        <Button variant="contained" size="medium" color="primary" fullWidth>
+        <Button
+          variant="contained"
+          size="medium"
+          color="primary"
+          fullWidth
+          onClick={onAddToCart}
+        >
           Add to cart
         </Button>
       </CardActions>
