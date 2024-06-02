@@ -39,20 +39,23 @@ export default function SignUp() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    axios.post('http://localhost:3000/auth/signup', {
-      first_name: data.get('firstName'),
-      last_name: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-      phone: data.get('phone'),
-      roles: ['user']
-    }).then((response) => {
+    axios
+      .post('http://localhost:3000/auth/signup', {
+        first_name: data.get('firstName'),
+        last_name: data.get('lastName'),
+        email: data.get('email'),
+        password: data.get('password'),
+        phone: data.get('phone'),
+        roles: ['user'],
+      })
+      .then((response) => {
         localStorage.setItem('accessToken', response.data.accessToken);
         localStorage.setItem('refreshToken', response.data.refreshToken);
         window.location.href = '/product';
-    }).catch((error) => {
+      })
+      .catch((error) => {
         console.log(error);
-    });
+      });
   };
 
   return (

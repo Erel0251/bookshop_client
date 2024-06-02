@@ -16,7 +16,12 @@ import axios from 'axios';
 
 function Copyright(props: any) {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
         Your Website
@@ -34,16 +39,19 @@ export default function SignIn() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    axios.post('http://localhost:3000/auth/login', {
-      email: data.get('email'),
-      password: data.get('password')
-    }).then((response) => {
+    axios
+      .post('http://localhost:3000/auth/login', {
+        email: data.get('email'),
+        password: data.get('password'),
+      })
+      .then((response) => {
         localStorage.setItem('accessToken', response.data.accessToken);
         localStorage.setItem('refreshToken', response.data.refreshToken);
         window.location.href = '/product';
-    }).catch((error) => {
+      })
+      .catch((error) => {
         console.log(error);
-    });
+      });
   };
 
   return (
@@ -64,7 +72,12 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
+          >
             <TextField
               margin="normal"
               required
