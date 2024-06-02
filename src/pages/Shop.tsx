@@ -46,6 +46,11 @@ function Shop() {
 
   const pageCount = Math.ceil(data.books.total / params.limit);
 
+  const onChangePage = (event: any, page: number) => {
+    const offset = (page - 1) * params.limit;
+    refetch({ ...params, offset });
+  };
+
   return (
     <Box className="body">
       <Grid container spacing={2}>
@@ -67,7 +72,11 @@ function Shop() {
               limit={params.limit}
             />
             <ListProducts books={data.books.data} />
-            <Pagination count={pageCount} shape="rounded" />
+            <Pagination
+              count={pageCount}
+              shape="rounded"
+              onChange={onChangePage}
+            />
           </Container>
         </Grid>
       </Grid>
