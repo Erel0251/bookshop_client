@@ -39,3 +39,29 @@ export const BOOKS_QUERY = gql`
     }
   }
 `;
+export const DETAIL_BOOK_QUERY = gql`
+  query GetBook($id: String!) {
+    book(id: $id) {
+      id
+      title
+      img_urls
+      author
+      publisher
+      overview
+      isbn
+      inventory
+      price
+      sale_price
+      currency
+      category {
+        id
+        name
+      }
+      reviews {
+        title
+        comment
+        rating
+      }
+    }
+  }
+`;
