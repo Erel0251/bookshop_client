@@ -1,29 +1,17 @@
-// src/Footer.js
+import { Box, Container, Typography } from '@mui/material';
 
 function Footer() {
   return (
-    <>
-      <footer className="footer">
-        <section className="footer__logo">
-          <img src="./src/assets/images/book.jpg" alt="logo" />
-          <div>2024</div>
-        </section>
-        <section className="footer__navigation">
-          <div>Navigation</div>
-          <a href="#">Home</a>
-          <a href="#">About</a>
-          <a href="#">Shop</a>
-          <a href="#">Cart</a>
-          <a href="#">Contact</a>
-        </section>
-        <section className="footer__location">
-          <div>Location</div>
-          <p>1234 Main St</p>
-          <p>San Francisco, CA</p>
-          <p>94123</p>
-        </section>
-      </footer>
-    </>
+    <Box component="footer" className="footer">
+          <Box display="flex" alignItems="center" flexGrow={0}>
+            <img src="./src/assets/images/book.png" alt="logo" width={180}/>
+          </Box>
+          <Container sx={{ display: 'flex', flexDirection: 'column', gap:'1rem', m: '0'}}>
+          <Typography variant="h6">BookWorm</Typography>
+          <Typography variant="body2">Address</Typography>
+          <Typography variant="body2">Phone</Typography>
+          </Container>
+    </Box>
   );
 }
 
