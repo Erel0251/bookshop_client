@@ -2,7 +2,7 @@ import { Category } from './Category';
 import { Review } from './Review';
 
 export interface Book {
-  id: number;
+  id: string;
   title: string;
   author?: string;
   overview?: string;
