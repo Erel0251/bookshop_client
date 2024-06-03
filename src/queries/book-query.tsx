@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 export const BOOKS_QUERY = gql`
   query GetBooks(
     $search: String
-    $category: String
+    $categories: [String!]
     $rating: Float
     $fromPrice: Float
     $toPrice: Float
@@ -14,7 +14,7 @@ export const BOOKS_QUERY = gql`
   ) {
     books(
       search: $search
-      category: $category
+      categories: $categories
       rating: $rating
       fromPrice: $fromPrice
       toPrice: $toPrice
@@ -35,6 +35,9 @@ export const BOOKS_QUERY = gql`
         status
         currency
         inventory
+        category {
+          name
+        }
       }
     }
   }

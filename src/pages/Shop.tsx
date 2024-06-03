@@ -55,7 +55,13 @@ function Shop() {
     <Box className="body">
       <Grid container spacing={2}>
         <Grid item xs={0} md={3}>
-          <FilterBook />
+          <FilterBook
+            search={params.search}
+            categoriesSelected={params.categories}
+            fromPrice={params.fromPrice}
+            toPrice={params.toPrice}
+            rating={params.rating}
+          />
         </Grid>
         <Grid item xs>
           <Container
@@ -67,6 +73,8 @@ function Shop() {
             }}
           >
             <SortBook
+              sortBy={params.sortBy}
+              order={params.order}
               total={data.books.total}
               offset={params.offset}
               limit={params.limit}

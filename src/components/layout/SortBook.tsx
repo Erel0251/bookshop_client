@@ -23,22 +23,32 @@ const sortingOptions = [
 const shows = [5, 20, 50, 100];
 
 function SortBook({
+  type,
+  sortBy,
+  order,
   total,
   offset,
   limit,
 }: {
+  type?: string;
+  sortBy?: string;
+  order?: string;
   total: number;
   offset: number;
   limit: number;
 }) {
-  const [sortBy, setSortBy] = useState('Newest');
-  const [show, setShow] = useState(20);
+  console.log(type);
+  const sortSelected = sortingOptions.find(
+    (option) => option.sortBy === sortBy && option.order === order,
+  );
+  const [sort, setSort] = useState(sortSelected?.label || 'Popular');
+  const [show, setShow] = useState(limit);
 
   const dispatch = useDispatch();
 
   const handleSortChange = (event: SelectChangeEvent) => {
     const value = event.target.value;
-    setSortBy(value);
+    setSort(value);
 
     const sortOption = sortingOptions.find((option) => option.label === value);
     dispatch(
@@ -77,7 +87,7 @@ function SortBook({
       >
         <FormControl sx={{ m: 1, minWidth: 180 }}>
           <InputLabel>Sort By</InputLabel>
-          <Select value={sortBy} onChange={handleSortChange} label="Sort By">
+          <Select value={sort} onChange={handleSortChange} label="Sort By">
             {sortingOptions.map((option, index) => (
               <MenuItem key={index} value={option.label}>
                 {option.label}

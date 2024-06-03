@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const defaults = {
   search: '',
-  category: '',
+  categories: [],
   rating: null,
   fromPrice: null,
   toPrice: null,
@@ -18,7 +18,20 @@ const queryParamsSlice = createSlice({
   initialState: defaults,
   reducers: {
     setQueryParam: (state, action) => {
-      state[action.payload.name] = action.payload.value;
+      if (action.payload.name === 'categories') {
+        let categories = state[action.payload.name];
+        if (categories.includes(action.payload.value)) {
+          // Filter out the category if it already exists
+          state[action.payload.name] = categories.filter(
+            (category) => category !== action.payload.value,
+          );
+        } else {
+          // Add the category if it doesn't exist
+          state[action.payload.name] = [...categories, action.payload.value];
+        }
+      } else {
+        state[action.payload.name] = action.payload.value;
+      }
     },
     setQueryParams: (state, action) => {
       Object.keys(action.payload).forEach((key) => {
