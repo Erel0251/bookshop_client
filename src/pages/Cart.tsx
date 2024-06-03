@@ -9,6 +9,11 @@ import {
   Typography,
 } from '@mui/material';
 import DataTable from '../components/layout/Table';
+import React, { useEffect } from 'react';
+import { Book } from '../types/Book';
+import { User } from '../types/User';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import axios from 'axios';
 
 function PlaceOrder() {
   return (
@@ -77,6 +82,23 @@ function PlaceOrder() {
 }
 
 function Cart() {
+  /*
+  const dispatch = useAppDispatch();
+  const cartItems = useAppSelector(state => state.cart.items);
+  const user = useAppSelector(state => state.user as User);
+
+  useEffect(() => {
+    if (user.isLoggedIn) {
+      axios.get('/cart')
+        .then(response => {
+          dispatch(loadCart(response.data));
+        })
+        .catch(error => {
+          console.error('Failed to load cart', error);
+        });
+    }
+  }, [user, dispatch]);
+*/
   return (
     <Box className="body">
       <Container>
