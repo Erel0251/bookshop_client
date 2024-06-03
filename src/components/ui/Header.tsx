@@ -15,8 +15,10 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { useAppDispatch } from '../../hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { logoutUser } from '../../redux/slices/UserSlice';
+import { User } from '../../types/User';
+import axios from 'axios';
 
 const Anynomous = () => {
   return (
@@ -48,7 +50,8 @@ const Anynomous = () => {
   );
 };
 
-const User = () => {
+const Customer = ({ name }: { name: string }) => {
+  const dispatch = useAppDispatch();
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -59,11 +62,24 @@ const User = () => {
     setAnchorElUser(null);
   };
 
+  const handleLogout = () => {
+    axios
+      .post('http://localhost:3000/auth/logout')
+      .then(() => {
+        dispatch(logoutUser());
+        window.location.reload();
+      })
+      .catch(() => {
+        dispatch(logoutUser());
+        window.location.reload();
+      });
+  };
+
   return (
-    <Box sx={{ flexGrow: 0 }}>
+    <Box sx={{ flexGrow: 0, ml: '1rem' }}>
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          <Avatar alt="Đức Anh" />
+          <Avatar alt={name} src="" />
         </IconButton>
       </Tooltip>
       <Menu
@@ -83,13 +99,13 @@ const User = () => {
         onClose={handleCloseUserMenu}
       >
         <MenuItem key="name" disabled>
-          <Typography textAlign="center">Tran Duc Anh</Typography>
+          <Typography textAlign="center">{name}</Typography>
         </MenuItem>
         <Divider />
         <MenuItem key="profile" disabled>
           <Typography textAlign="center">Profile</Typography>
         </MenuItem>
-        <MenuItem key="logout" onClick={handleCloseUserMenu}>
+        <MenuItem key="logout" onClick={handleLogout}>
           <Typography textAlign="center">Logout</Typography>
         </MenuItem>
       </Menu>
@@ -98,6 +114,12 @@ const User = () => {
 };
 
 function Header() {
+  const user = useAppSelector((state) => state.user.user as User | null);
+
+  const name = user ? user.first_name + ' ' + user.last_name : 'Guest';
+  const isLoggedIn = user !== null;
+  const cart = user ? user.cart : 0;
+
   return (
     <>
       <AppBar className="header">
@@ -126,13 +148,13 @@ function Header() {
                 About
               </Button>
             </Box>
-            <Box sx={{ display: 'flex', gap: '2rem' }}>
+            <Box sx={{ display: 'flex' }}>
               <IconButton color="inherit" href="/cart">
-                <Badge badgeContent={4} max={10} color="warning">
+                <Badge badgeContent={cart} max={10} color="warning">
                   <ShoppingCart />
                 </Badge>
               </IconButton>
-              <User />
+              {isLoggedIn ? <Customer name={name} /> : <Anynomous />}
             </Box>
           </Toolbar>
         </CssBaseline>

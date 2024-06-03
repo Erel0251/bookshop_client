@@ -13,6 +13,7 @@ import Container from '@mui/material/Container';
 import axios from 'axios';
 import { useAppDispatch } from '../hooks/redux';
 import { loginUser } from '../redux/slices/UserSlice';
+import { User } from '../types/User';
 
 function Copyright(props: any) {
   return (
@@ -43,10 +44,10 @@ export default function SignIn() {
         password: data.get('password'),
       })
       .then((response) => {
-        dispatch(loginUser(response.data.user));
-        localStorage.setItem('accessToken', response.data.accessToken);
-        localStorage.setItem('refreshToken', response.data.refreshToken);
-        window.location.href = '/product';
+        dispatch(loginUser(response.data.user as User));
+        localStorage.setItem('accessToken', response.data.tokens.accessToken);
+        localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
+        window.location.href = '/';
       })
       .catch((error) => {
         console.log(error);

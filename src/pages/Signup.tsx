@@ -11,6 +11,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../redux/slices/UserSlice';
+import { User } from '../types/User';
 
 function Copyright(props: any) {
   return (
@@ -31,6 +34,7 @@ function Copyright(props: any) {
 }
 
 export default function SignUp() {
+  const dispatch = useDispatch();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -44,9 +48,10 @@ export default function SignUp() {
         roles: ['user'],
       })
       .then((response) => {
-        localStorage.setItem('accessToken', response.data.accessToken);
-        localStorage.setItem('refreshToken', response.data.refreshToken);
-        window.location.href = '/product';
+        dispatch(loginUser(response.data.user as User));
+        localStorage.setItem('accessToken', response.data.tokens.accessToken);
+        localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
+        window.location.href = '/';
       })
       .catch((error) => {
         console.log(error);
