@@ -15,10 +15,12 @@ const CardSlider = ({ cards }: { cards: Book[] }) => {
   });
 
   const handleNext = () => {
+    if (cards.length <= 4) return;
     setCurrentIndex((prevIndex) => (prevIndex + 1) % (cards.length - 3));
   };
 
   const handlePrev = () => {
+    if (cards.length <= 4) return;
     setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? cards.length - 4 : prevIndex - 1,
     );
