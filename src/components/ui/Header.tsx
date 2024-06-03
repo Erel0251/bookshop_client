@@ -82,17 +82,16 @@ const User = () => {
         open={Boolean(anchorElUser)}
         onClose={handleCloseUserMenu}
       >
-          <MenuItem key='name' disabled>
-            <Typography textAlign="center">Tran Duc Anh</Typography>
-          </MenuItem>
-          <Divider />
-          <MenuItem key='profile' disabled>
-            <Typography textAlign="center">Profile</Typography>
-          </MenuItem>
-          <MenuItem key='logout' onClick={handleCloseUserMenu}>
-            <Typography textAlign="center">Logout</Typography>
-          </MenuItem>
-        
+        <MenuItem key="name" disabled>
+          <Typography textAlign="center">Tran Duc Anh</Typography>
+        </MenuItem>
+        <Divider />
+        <MenuItem key="profile" disabled>
+          <Typography textAlign="center">Profile</Typography>
+        </MenuItem>
+        <MenuItem key="logout" onClick={handleCloseUserMenu}>
+          <Typography textAlign="center">Logout</Typography>
+        </MenuItem>
       </Menu>
     </Box>
   );

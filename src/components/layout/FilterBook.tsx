@@ -24,14 +24,57 @@ import { Category } from '../../types/Category';
 import { useCallback, useState } from 'react';
 import { ExpandLess, ExpandMore, Search } from '@mui/icons-material';
 import { CategoryTree } from '../../utils/CategoryTree.helper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   resetQueryParams,
   setQueryParam,
   setQueryParams,
-} from '../../redux/QueryParamsSlice';
+} from '../../redux/slices/QueryParamsSlice';
 import { debounce } from 'lodash';
 import { formatName } from '../../utils/Format.helper';
+
+const SearchBar = () => {
+  const { search } = useSelector((state: any) => state.queryParams);
+  const [input, setInput] = useState(search || '');
+
+  const dispatch = useDispatch();
+
+  const handleInput = (event: any) => {
+    setInput(event.target.value);
+  };
+
+  const handleSearch = (keyword?: string) => {
+    dispatch(
+      setQueryParam({
+        name: 'search',
+        value: keyword || '',
+      }),
+    );
+  };
+
+  return (
+    <Box>
+      <CardHeader title="Search" />
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <InputBase
+          sx={{ ml: '1rem', flex: 1 }}
+          placeholder="Search…"
+          inputProps={{ 'aria-label': 'search' }}
+          value={input}
+          onChange={handleInput}
+        />
+        <IconButton
+          type="button"
+          sx={{ p: '10px' }}
+          aria-label="search"
+          onClick={() => handleSearch(input)}
+        >
+          <Search />
+        </IconButton>
+      </Box>
+    </Box>
+  );
+};
 
 const CategoryItem = ({ category }: { category: Category }) => {
   const [open, setOpen] = useState(false);
@@ -85,13 +128,8 @@ const CategoryList = ({ categories }: { categories?: Category[] }) => {
   );
 };
 
-const PriceSlider = ({
-  fromPrice,
-  toPrice,
-}: {
-  fromPrice: number;
-  toPrice: number;
-}) => {
+const PriceSlider = () => {
+  const { fromPrice, toPrice } = useSelector((state: any) => state.queryParams);
   const [value, setValue] = useState([fromPrice, toPrice]);
   const minDistance = 50000;
 
@@ -163,22 +201,46 @@ const PriceSlider = ({
   );
 };
 
-function FilterBook({
-  search,
-  categoriesSelected,
-  fromPrice,
-  toPrice,
-  rating,
-}: {
-  search: string;
-  categoriesSelected?: string[];
-  fromPrice: number;
-  toPrice: number;
-  rating: number;
-}) {
+const RatingList = () => {
+  const rating = useSelector((state: any) => state.queryParams.rating);
+  const dispatch = useDispatch();
+
+  const handleRating = (rating: number) => {
+    dispatch(setQueryParam({ name: 'rating', value: rating }));
+  };
+
+  const stars = [5, 4, 3, 2, 1];
+
+  return (
+    <Box
+      sx={{
+        marginX: '2rem',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.2rem',
+      }}
+    >
+      {stars.map((star) => (
+        <Box
+          key={star}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '0.5rem',
+          }}
+          onClick={() => handleRating(star)}
+        >
+          <Rating name="read-only" value={star} size="small" readOnly />
+          <Typography variant="body1">{star} Star</Typography>
+        </Box>
+      ))}
+    </Box>
+  );
+};
+
+function FilterBook({ categoriesSelected }: { categoriesSelected?: string[] }) {
   const { data, loading, error } = useQuery(CATEGORIES_QUERY);
   const dispatch = useDispatch();
-  const [input, setInput] = useState(search || '');
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :{error.message}</p>;
@@ -191,33 +253,10 @@ function FilterBook({
     return newCategory;
   });
   const categories = CategoryTree(addChecked);
-  const stars = [5, 4, 3, 2, 1];
-
-  const updateValue = useCallback(
-    debounce((keyword: string) => {
-      dispatch(
-        setQueryParam({
-          name: 'search',
-          value: keyword,
-        }),
-      );
-    }, 500), // Adjust the debounce delay as needed
-    [],
-  );
-
-  const handleRating = (rating: number) => {
-    dispatch(setQueryParam({ name: 'rating', value: rating }));
-  };
 
   const handleResetFilter = () => {
     dispatch(resetQueryParams());
     window.location.reload();
-  };
-
-  const handleSearch = (event: any) => {
-    const keyword = event.target.value;
-    setInput(keyword);
-    updateValue(keyword);
   };
 
   return (
@@ -235,19 +274,7 @@ function FilterBook({
         </Box>
       </CardContent>
       <Divider />
-      <Box>
-        <CardHeader title="Search" />
-        <InputBase
-          sx={{ ml: '1rem', flex: 1 }}
-          placeholder="Search…"
-          inputProps={{ 'aria-label': 'search' }}
-          value={input}
-          onChange={handleSearch}
-        />
-        <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-          <Search />
-        </IconButton>
-      </Box>
+      <SearchBar />
       <Divider />
       <Box>
         <CardHeader title="Category" />
@@ -259,35 +286,10 @@ function FilterBook({
       </Box>
       <Divider />
       <CardHeader title="Rating" />
-      <Box
-        sx={{
-          marginX: '2rem',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.2rem',
-        }}
-      >
-        {stars.map((star) => (
-          <Box
-            key={star}
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: '0.5rem',
-            }}
-            onClick={() => handleRating(star)}
-          >
-            <Rating name="read-only" value={star} size="small" readOnly />
-            <Typography variant="body1">{star} Star</Typography>
-          </Box>
-        ))}
-      </Box>
+      <RatingList />
       <Box sx={{ m: '2.5rem' }}>
         <Typography variant="h5">Price</Typography>
-        <PriceSlider
-          fromPrice={fromPrice}
-          toPrice={toPrice > 0 ? toPrice : 1000000}
-        />
+        <PriceSlider />
       </Box>
     </Card>
   );

@@ -8,8 +8,11 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { setQueryParam, setQueryParams } from '../../redux/QueryParamsSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setQueryParam,
+  setQueryParams,
+} from '../../redux/slices/QueryParamsSlice';
 
 const sortingOptions = [
   { label: 'Popular', type: 'popular', sortBy: null, order: null },
@@ -22,26 +25,14 @@ const sortingOptions = [
 
 const shows = [5, 20, 50, 100];
 
-function SortBook({
-  type,
-  sortBy,
-  order,
-  total,
-  offset,
-  limit,
-}: {
-  type?: string;
-  sortBy?: string;
-  order?: string;
-  total: number;
-  offset: number;
-  limit: number;
-}) {
-  console.log(type);
+function SortBook() {
+  const { type, sortBy, order, total, offset, limit } = useSelector(
+    (state: any) => state.queryParams,
+  );
   const sortSelected = sortingOptions.find(
     (option) => option.sortBy === sortBy && option.order === order,
   );
-  const [sort, setSort] = useState(sortSelected?.label || 'Popular');
+  const [sort, setSort] = useState(sortSelected?.label || 'Newest');
   const [show, setShow] = useState(limit);
 
   const dispatch = useDispatch();
