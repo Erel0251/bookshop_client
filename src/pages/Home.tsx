@@ -1,54 +1,46 @@
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { Box, Container, Grid, Typography } from '@mui/material';
-import { gql, useQuery } from '@apollo/client';
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Container,
+  Grid,
+  Link,
+  Typography,
+} from '@mui/material';
+import { useQuery } from '@apollo/client';
 import { Book } from '../types/Book';
 import BookCard from '../components/layout/BookCard';
 import CardSlider from '../components/layout/CardSlider';
+import { DASHBOARD_BOOKS_QUERY } from '../queries/book-query';
+import { useState } from 'react';
 
-const BOOK_QUERY = gql`
-  query {
-    books {
-      id
-      title
-      author
-      publisher
-      img_urls
-      price
-      sale_price
-      status
-      currency
-      inventory
-    }
-    promotionType {
-      name
-      type
-      promotion_books {
-        id
-        book_id
-        name
-        author
-        publisher
-        price
-        discount
-        price
-      }
-    }
-  }
-`;
+const SelectSlider = ({ data }: { data: any }) => {
+  const [selectedSlider, setSelectedSlider] = useState('sale');
+
+  return (
+    <Box
+      sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+    >
+      <ButtonGroup>
+        <Button onClick={() => setSelectedSlider('sale')}>Sale</Button>
+        <Button onClick={() => setSelectedSlider('recommend')}>
+          Recommend
+        </Button>
+      </ButtonGroup>
+
+      {selectedSlider === 'sale' && (
+        <CardSlider cards={data.sale[0].promotion_books} />
+      )}
+      {selectedSlider === 'recommend' && (
+        <CardSlider cards={data.recommend[0].promotion_books} />
+      )}
+    </Box>
+  );
+};
 
 function Home() {
-  /*
-  const [bookData, setBookData] = useState([] as Book[]);
-  useEffect(() => {
-    const fetchData = async () => {
-      // const response = await axios.get('http://localhost:3000/book'); // Replace with your API endpoint
-      // setBookData(response.data as Book[]);
-    };
-
-    fetchData();
-  }, []);
-  */
-  const { data, loading, error } = useQuery(BOOK_QUERY);
+  const { data, loading, error } = useQuery(DASHBOARD_BOOKS_QUERY);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :{error.message}</p>;
@@ -67,12 +59,12 @@ function Home() {
           <Typography variant="h4" gutterBottom>
             Featured Books
           </Typography>
-          <Typography variant="body2" color="primary">
+          <Link href="/shop" variant="body2" color="primary">
             View all
-          </Typography>
+          </Link>
         </Box>
         <Grid container spacing={2}>
-          {data.books.map((launch: Book, index: number) => (
+          {data.books.data.map((launch: Book, index: number) => (
             <Grid item xs={6} sm={4} md={3} key={index}>
               <BookCard book={launch} />
             </Grid>
@@ -81,9 +73,9 @@ function Home() {
       </Container>
       <Container>
         <Typography variant="h4" gutterBottom style={{ marginTop: '2rem' }}>
-          Featured Books
+          Popular Books
         </Typography>
-        <CardSlider cards={data.books} />
+        <SelectSlider data={data} />
       </Container>
     </Box>
   );

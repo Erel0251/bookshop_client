@@ -68,3 +68,47 @@ export const DETAIL_BOOK_QUERY = gql`
     }
   }
 `;
+
+export const DASHBOARD_BOOKS_QUERY = gql`
+  query GetDashboardBooks {
+    books(limit: 8) {
+      data {
+        id
+        title
+        author
+        publisher
+        img_urls
+        price
+        sale_price
+        currency
+        inventory
+      }
+    }
+    sale {
+      promotion_books {
+        detail_id
+        id
+        title
+        author
+        publisher
+        img_urls
+        price
+        sale_price
+        currency
+      }
+    }
+    recommend {
+      promotion_books {
+        detail_id
+        id
+        title
+        author
+        publisher
+        img_urls
+        price
+        sale_price
+        currency
+      }
+    }
+  }
+`;
