@@ -1,9 +1,16 @@
 import { Add, Remove } from '@mui/icons-material';
 import { Box, ButtonGroup, IconButton, Input, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import {
+  removeFromCart,
+  updateCartItemQuantity,
+} from '../../redux/slices/CartReducer';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 // url cover example: https://edit.org/images/cat/book-covers-big-2019101610.jpg
 
 export default function DataTable() {
+  const dispatch = useAppDispatch();
+  const cartItems = useAppSelector((state) => state.cart.items);
   const formatPrice = (price: number, currency: string) =>
     price.toLocaleString('vi-VN', {
       style: 'currency',
@@ -16,6 +23,10 @@ export default function DataTable() {
     ) as HTMLInputElement;
     row.quantity = parseInt(row.quantity) - 1;
     quantity.value = row.quantity.toString();
+    if (row.quantity === 0) {
+      dispatch(removeFromCart(row.id));
+    }
+    dispatch(updateCartItemQuantity({ id: row.id, quantity: row.quantity }));
   };
 
   const onClickPlus = (row: any) => {
@@ -24,6 +35,7 @@ export default function DataTable() {
     ) as HTMLInputElement;
     row.quantity = parseInt(row.quantity) + 1;
     quantity.value = row.quantity.toString();
+    dispatch(updateCartItemQuantity({ id: row.id, quantity: row.quantity }));
   };
 
   const cartColumns: GridColDef[] = [
@@ -53,8 +65,14 @@ export default function DataTable() {
             justifyContent: 'center',
           }}
         >
-          <Typography variant="h6">{params.row.title}</Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="h6" sx={{ textWrap: 'wrap' }}>
+            {params.row.title}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ textWrap: 'wrap' }}
+          >
             {params.row.author}
           </Typography>
         </Box>
@@ -138,7 +156,7 @@ export default function DataTable() {
     },
   ];
 
-  const cartRows = [
+  const cartRowsSample = [
     {
       id: 1,
       img: 'https://edit.org/images/cat/book-covers-big-2019101610.jpg',
@@ -174,14 +192,25 @@ export default function DataTable() {
     },
   ];
 
+  const cartRows = cartItems?.map((item) => ({
+    id: item.book.id,
+    img: item.book.img_urls[0],
+    title: item.book.title,
+    author: item.book.author ?? item.book.publisher,
+    price: item.book.price,
+    sale_price: item.book.sale_price,
+    currency: item.book.currency ?? 'VND',
+    quantity: item.quantity,
+    total: (item.book.sale_price ?? item.book.price) * item.quantity,
+  }));
+
   return (
     <div style={{ width: '100%' }}>
       <DataGrid
-        rows={cartRows}
+        rows={cartRows ?? cartRowsSample}
         rowHeight={200}
         columns={cartColumns}
         pageSizeOptions={[5, 10]}
-        checkboxSelection
       />
     </div>
   );

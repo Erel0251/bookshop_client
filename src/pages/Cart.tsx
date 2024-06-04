@@ -9,70 +9,85 @@ import {
   Typography,
 } from '@mui/material';
 import DataTable from '../components/layout/Table';
-import React, { useEffect } from 'react';
-import { Book } from '../types/Book';
+import { useEffect } from 'react';
 import { User } from '../types/User';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
-import axios from 'axios';
+import { formatPrice } from '../utils/Format.helper';
+//import axios from 'axios';
 
 function PlaceOrder() {
+  const cart = useAppSelector((state) => state.cart.items);
+
+  const price = cart.reduce(
+    (acc, item) => acc + item.book.price * item.quantity,
+    0,
+  );
+  const sale_price = cart.reduce(
+    (acc, item) => acc + item.book.sale_price * item.quantity,
+    0,
+  );
+  const currency = cart[0]?.book.currency || 'VND';
+  const ship = 30000;
+  const total = price - sale_price + ship;
+  console.log(price, sale_price);
+
   return (
     <Card>
       <Container>
         <CardHeader title="Order Summary" />
         <Divider />
         <Grid container spacing={2} style={{ marginTop: '1rem' }}>
-          <Grid item xs={8}>
+          <Grid item xs={6}>
             <Typography variant="body1" gutterBottom>
-              Subtotal:
+              Price:
             </Typography>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={6}>
             <Typography textAlign={'right'} variant="body1" gutterBottom>
-              $100
+              {formatPrice(price, currency)}
             </Typography>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={6}>
             <Typography variant="body1" gutterBottom>
               Shipping:
             </Typography>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={6}>
             <Typography textAlign={'right'} variant="body1" gutterBottom>
-              $10
+              {formatPrice(ship, currency)}
             </Typography>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={6}>
             <Typography variant="body1" gutterBottom>
-              Tax:
+              Sale:
             </Typography>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={6}>
             <Typography textAlign={'right'} variant="body1" gutterBottom>
-              $5
+              -{formatPrice(sale_price, currency)}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Divider />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={3}>
             <Typography variant="body1" gutterBottom>
               Total:
             </Typography>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={9}>
             <Typography
               textAlign={'right'}
               variant="h5"
               fontWeight={600}
               gutterBottom
             >
-              $115
+              {formatPrice(total, currency)}
             </Typography>
           </Grid>
         </Grid>
         <Box sx={{ m: '1rem' }}>
-          <Button variant="outlined" fullWidth>
+          <Button href="/checkout" variant="outlined" fullWidth>
             Place Order
           </Button>
         </Box>
@@ -82,13 +97,12 @@ function PlaceOrder() {
 }
 
 function Cart() {
-  /*
   const dispatch = useAppDispatch();
-  const cartItems = useAppSelector(state => state.cart.items);
-  const user = useAppSelector(state => state.user as User);
+  const user = useAppSelector((state) => state.user.user as User);
 
   useEffect(() => {
-    if (user.isLoggedIn) {
+    if (user) {
+      /*
       axios.get('/cart')
         .then(response => {
           dispatch(loadCart(response.data));
@@ -96,9 +110,10 @@ function Cart() {
         .catch(error => {
           console.error('Failed to load cart', error);
         });
+      */
     }
   }, [user, dispatch]);
-*/
+
   return (
     <Box className="body">
       <Container>
