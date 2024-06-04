@@ -5,11 +5,13 @@ import { persistReducer, persistStore } from 'redux-persist';
 import queryParamsSlice from './slices/QueryParamsSlice';
 import cartReducer from './slices/CartReducer';
 import userReducer from './slices/UserSlice';
+import bookReducer from './slices/BookSlice';
 
 const reducers = {
   queryParams: queryParamsSlice,
   cart: cartReducer,
   user: userReducer,
+  book: bookReducer,
 };
 
 const persistConfig = {
@@ -23,6 +25,7 @@ const rootReducer = (state: any, action: any) => {
     queryParams: reducers.queryParams(state?.queryParams, action),
     cart: reducers.cart(state?.cart, action),
     user: reducers.user(state?.user, action),
+    book: reducers.book(state?.book, action),
   };
 };
 

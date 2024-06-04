@@ -1,23 +1,17 @@
 import {
-  Button,
   Card,
   CardActions,
   CardContent,
   CardMedia,
-  SelectChangeEvent,
   Typography,
 } from '@mui/material';
 import { Book } from '../../types/Book';
 import { useNavigate } from 'react-router-dom';
 import { formatName, formatPrice } from '../../utils/Format.helper';
+import AddToCart from './AddToCart';
 
 function BookCard({ book }: { book: Book }) {
   const navigate = useNavigate();
-
-  const onAddToCart = (e: SelectChangeEvent) => {
-    e.stopPropagation();
-    console.log('Add to cart');
-  };
 
   const onViewDetail = () => {
     navigate(`/product/${book.id}`);
@@ -73,15 +67,7 @@ function BookCard({ book }: { book: Book }) {
         )}
       </CardContent>
       <CardActions className="card__action">
-        <Button
-          variant="contained"
-          size="medium"
-          color="primary"
-          fullWidth
-          onClick={onAddToCart}
-        >
-          Add to cart
-        </Button>
+        <AddToCart book={book} />
       </CardActions>
     </Card>
   );
