@@ -10,6 +10,7 @@ import NotFound from './pages/NotFound';
 import { Box } from '@mui/material';
 import SignIn from './pages/Login';
 import SignUp from './pages/Signup';
+import CheckOut from './pages/Checkout';
 import OrderSuccess from './pages/OrderSuccess';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<CheckOut />} />
           <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/product/:id" element={<Product />} />
           <Route path="/about" element={<About />} />

@@ -18,17 +18,63 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { formatPrice } from '../utils/Format.helper';
+import axios from 'axios';
+import { clearCart } from '../redux/slices/CartReducer';
 
 const CheckoutForm = () => {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user.user);
+  const cartItems = useAppSelector((state) => state.cart.items);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const order = {
+      user_id: user?.id,
+      name: data.get('name'),
+      email: data.get('email'),
+      phone: data.get('phone'),
+      ward: data.get('ward'),
+      district: data.get('district'),
+      province: data.get('province'),
+      address: data.get('address'),
+      order_details: cartItems.map((item) => ({
+        book_id: item.book.id,
+        price: item.book.price,
+        discount: item.book.sale_price / item.book.price,
+        total_price: item.book.sale_price || item.book.price,
+        quantity: item.quantity,
+      })),
+    };
+    axios
+      .post('http://localhost:3000/order', order, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          role: user?.roles,
+        },
+        withCredentials: true,
+      })
+      .then(() => {
+        dispatch(clearCart());
+        window.location.href = '/checkout/success';
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <Container>
-      <form>
+      <Box component={'form'} onSubmit={handleSubmit}>
         <Typography variant="h6" gutterBottom>
           Shipping Address
         </Typography>
-        <Grid container spacing={3}>
+        <Grid container spacing={4}>
           <Grid item xs={12}>
             <TextField
+              defaultValue={user?.last_name + ' ' + user?.first_name}
               required
               id="name"
               name="name"
@@ -39,6 +85,7 @@ const CheckoutForm = () => {
           </Grid>
           <Grid item xs={12} sm={7}>
             <TextField
+              defaultValue={user?.email}
               required
               id="email"
               name="email"
@@ -49,6 +96,7 @@ const CheckoutForm = () => {
           </Grid>
           <Grid item xs={12} sm={5}>
             <TextField
+              defaultValue={user?.phone}
               required
               id="phone"
               name="phone"
@@ -94,12 +142,25 @@ const CheckoutForm = () => {
             </Button>
           </Grid>
         </Grid>
-      </form>
+      </Box>
     </Container>
   );
 };
 
-const OrderSummary = ({ items, totalPrice, totalDiscount }) => {
+const OrderSummary = ({
+  items,
+  totalPrice,
+  totalDiscount,
+  currency,
+}: {
+  items: any[];
+  totalPrice: number;
+  totalDiscount: number;
+  currency: string;
+}) => {
+  const ship = 30000;
+  const total = totalPrice + ship - totalDiscount;
+
   return (
     <Container>
       <Box>
@@ -135,10 +196,12 @@ const OrderSummary = ({ items, totalPrice, totalDiscount }) => {
                   margin: 'auto',
                 }}
               >
-                <Typography variant="body1">${item.price}</Typography>
+                <Typography variant="body1">
+                  {formatPrice(item.price, currency)}
+                </Typography>
                 {item.sale_price && (
                   <Typography variant="body1" color="error">
-                    -${item.price - item.sale_price}
+                    -{formatPrice(item.price - item.sale_price, currency)}
                   </Typography>
                 )}
               </Box>
@@ -152,7 +215,15 @@ const OrderSummary = ({ items, totalPrice, totalDiscount }) => {
             </Grid>
             <Grid item xs={4}>
               <Typography textAlign={'right'} variant="body1" gutterBottom>
-                ${totalPrice}
+                {formatPrice(totalPrice, currency)}
+              </Typography>
+            </Grid>
+            <Grid item xs={8}>
+              <Typography variant="body1">Ship Price:</Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Typography textAlign={'right'} variant="body1" gutterBottom>
+                {formatPrice(ship, currency)}
               </Typography>
             </Grid>
             <Grid item xs={8}>
@@ -162,7 +233,7 @@ const OrderSummary = ({ items, totalPrice, totalDiscount }) => {
             </Grid>
             <Grid item xs={4}>
               <Typography textAlign={'right'} variant="body1" color="error">
-                -${totalDiscount}
+                -{formatPrice(totalDiscount, currency)}
               </Typography>
             </Grid>
 
@@ -176,7 +247,7 @@ const OrderSummary = ({ items, totalPrice, totalDiscount }) => {
             </Grid>
             <Grid item xs={4}>
               <Typography textAlign={'right'} variant="h5" fontWeight={600}>
-                ${totalPrice - totalDiscount}
+                {formatPrice(total, currency)}
               </Typography>
             </Grid>
           </Grid>
@@ -187,29 +258,27 @@ const OrderSummary = ({ items, totalPrice, totalDiscount }) => {
 };
 
 function CheckOut() {
-  const items = [
-    {
-      name: 'Item 1',
-      quantity: 2,
-      price: 50,
-      sale_price: 40,
-      image: 'path/to/image1.jpg',
-    },
-    {
-      name: 'Item 2',
-      quantity: 1,
-      price: 100,
-      sale_price: 80,
-      image: 'path/to/image2.jpg',
-    },
-    { name: 'Item 3', quantity: 3, price: 30, image: 'path/to/image3.jpg' },
-  ];
+  const cartItems = useAppSelector((state) => state.cart.items);
+  const items = cartItems.map((item) => ({
+    name: item.book.title,
+    image: item.book.img_urls[0],
+    quantity: item.quantity,
+    price: item.book.price,
+    sale_price: item.book.sale_price,
+  }));
 
   const totalPrice = items.reduce(
     (total, item) => total + item.price * item.quantity,
     0,
   );
-  const totalDiscount = 20; // Example discount
+
+  const totalDiscount = items.reduce(
+    (total, item) =>
+      total + (item.price - (item.sale_price || item.price)) * item.quantity,
+    0,
+  );
+
+  const currency = cartItems[0]?.book.currency || 'VND';
 
   return (
     <Box className="body">
@@ -240,6 +309,7 @@ function CheckOut() {
                   items={items}
                   totalPrice={totalPrice}
                   totalDiscount={totalDiscount}
+                  currency={currency}
                 />
               </Grid>
             </Grid>
