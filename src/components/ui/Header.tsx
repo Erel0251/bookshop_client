@@ -115,11 +115,11 @@ const Customer = ({ name }: { name: string }) => {
 
 function Header() {
   const user = useAppSelector((state) => state.user.user as User | null);
+  const cartInfo = useAppSelector((state) => state.cart);
 
   const name = user ? user.first_name + ' ' + user.last_name : 'Guest';
   const isLoggedIn = user !== null;
-  const cart = user ? user.cart : 0;
-
+  const cart = cartInfo ? cartInfo.items.length : 0;
   return (
     <>
       <AppBar className="header">
@@ -131,7 +131,7 @@ function Header() {
               width: '100%',
             }}
           >
-            <Box display="flex" alignItems="center">
+            <Box display="flex" alignItems="center" component={'a'} href="/">
               <img src="./src/assets/images/book.png" alt="logo" width={50} />
               <Typography variant="h6" component="div">
                 BookWorm
