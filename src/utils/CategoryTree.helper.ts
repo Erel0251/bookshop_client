@@ -9,14 +9,14 @@ export const CategoryTree = (categories: Category[]) => {
   const lookup: Record<string, Category> = {};
 
   categories.forEach((category) => {
-    lookup[category.id] = { ...category, children: [] };
+    lookup[category.id!] = { ...category, children: [] };
   });
 
   categories.forEach((category) => {
-    if (category.father && lookup[category.father.id]) {
-      lookup[category.father.id].children?.push(lookup[category.id]);
+    if (category.father && lookup[category.father.id!]) {
+      lookup[category.father.id!].children?.push(lookup[category.id!]);
     } else {
-      categoryTree.push(lookup[category.id]);
+      categoryTree.push(lookup[category.id!]);
     }
   });
 

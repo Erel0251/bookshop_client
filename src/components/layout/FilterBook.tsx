@@ -146,14 +146,13 @@ const PublisherList = () => {
   const dispatch = useAppDispatch();
   const { publishers } = useSelector((state: any) => state.queryParams);
   const { data, loading, error } = useQuery(PUBLISHERS_QUERY);
-  
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :{error.message}</p>;
 
   const handleCheckbox = (name: string) => {
     dispatch(setQueryParam({ name: 'publishers', value: name }));
-  }
+  };
 
   // return list checkbox of publishers
   return (
@@ -164,7 +163,7 @@ const PublisherList = () => {
           control={<Checkbox />}
           label={formatName(publisher)}
           onClick={() => handleCheckbox(publisher)}
-          {...publishers.includes(publisher) && { checked: true }}
+          {...(publishers.includes(publisher) && { checked: true })}
         />
       ))}
     </FormGroup>
@@ -198,7 +197,7 @@ const PriceSlider = () => {
   };
 
   const updateValue = useCallback(
-    debounce((value) => {
+    debounce((value: any) => {
       dispatch(
         setQueryParams({
           fromPrice: value[0],
@@ -245,7 +244,7 @@ const PriceSlider = () => {
 };
 
 const RatingList = () => {
-  const rating = useSelector((state: any) => state.queryParams.rating);
+  //const rating = useSelector((state: any) => state.queryParams.rating);
   const dispatch = useDispatch();
 
   const handleRating = (rating: number) => {
