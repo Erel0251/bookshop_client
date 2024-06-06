@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const defaults = {
   search: '',
   categories: [],
+  publishers: [],
   rating: null,
   fromPrice: 0,
   toPrice: 1000000,
@@ -30,8 +31,17 @@ const queryParamsSlice = createSlice({
           // Add the category if it doesn't exist
           state[action.payload.name] = [...categories, action.payload.value];
         }
-      } else {
-        state[action.payload.name] = action.payload.value;
+      } else if (action.payload.name === 'publishers') {
+        let publishers = state[action.payload.name];
+        if (publishers.includes(action.payload.value)) {
+          // Filter out the publisher if it already exists
+          state[action.payload.name] = publishers.filter(
+            (publisher) => publisher !== action.payload.value,
+          );
+        } else {
+          // Add the publisher if it doesn't exist
+          state[action.payload.name] = [...publishers, action.payload.value];
+        }
       }
     },
     setQueryParams: (state, action) => {

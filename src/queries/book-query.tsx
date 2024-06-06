@@ -4,6 +4,7 @@ export const BOOKS_QUERY = gql`
   query GetBooks(
     $search: String
     $categories: [String!]
+    $publishers: [String!]
     $rating: Float
     $fromPrice: Float
     $toPrice: Float
@@ -16,6 +17,7 @@ export const BOOKS_QUERY = gql`
     books(
       search: $search
       categories: $categories
+      publishers: $publishers
       rating: $rating
       fromPrice: $fromPrice
       toPrice: $toPrice

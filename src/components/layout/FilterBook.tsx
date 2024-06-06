@@ -32,6 +32,7 @@ import {
 import { debounce } from 'lodash';
 import { formatName } from '../../utils/Format.helper';
 import { PUBLISHERS_QUERY } from '../../queries/book-query';
+import { useAppDispatch } from '../../hooks/redux';
 
 const SearchBar = () => {
   const { search } = useSelector((state: any) => state.queryParams);
@@ -142,11 +143,17 @@ const CategoryList = ({
 };
 
 const PublisherList = () => {
+  const dispatch = useAppDispatch();
+  const { publishers } = useSelector((state: any) => state.queryParams);
   const { data, loading, error } = useQuery(PUBLISHERS_QUERY);
-  //const { publishers } =
+  
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :{error.message}</p>;
+
+  const handleCheckbox = (name: string) => {
+    dispatch(setQueryParam({ name: 'publishers', value: name }));
+  }
 
   // return list checkbox of publishers
   return (
@@ -156,6 +163,8 @@ const PublisherList = () => {
           key={publisher}
           control={<Checkbox />}
           label={formatName(publisher)}
+          onClick={() => handleCheckbox(publisher)}
+          {...publishers.includes(publisher) && { checked: true }}
         />
       ))}
     </FormGroup>
