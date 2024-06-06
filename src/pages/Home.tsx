@@ -23,12 +23,14 @@ const SelectSlider = ({ data }: { data: any }) => {
       sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
     >
       <ButtonGroup>
+        <Button onClick={() => setSelectedSlider('popular')}>Popular</Button>
         <Button onClick={() => setSelectedSlider('sale')}>Sale</Button>
         <Button onClick={() => setSelectedSlider('recommend')}>
           Recommend
         </Button>
       </ButtonGroup>
 
+      {selectedSlider === 'popular' && <CardSlider cards={data.popular} />}
       {selectedSlider === 'sale' && (
         <CardSlider cards={data.sale[0].promotion_books} />
       )}
@@ -57,7 +59,7 @@ function Home() {
           }}
         >
           <Typography variant="h4" gutterBottom>
-            Featured Books
+            Newest Books
           </Typography>
           <Link href="/shop" variant="body2" color="primary">
             View all
@@ -65,7 +67,7 @@ function Home() {
         </Box>
         <Grid container spacing={2}>
           {data.books.data.map((launch: Book, index: number) => (
-            <Grid item xs={6} sm={4} md={3} key={index}>
+            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
               <BookCard book={launch} />
             </Grid>
           ))}

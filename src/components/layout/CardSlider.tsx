@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button, Box } from '@mui/material';
+import { Button, Box, Grid } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { Book } from '../../types/Book';
 import BookCard from './BookCard';
@@ -42,27 +42,21 @@ const CardSlider = ({ cards }: { cards: Book[] }) => {
       >
         <ArrowBack />
       </Button>
-      <Box
+      <Grid
         sx={{
           display: 'flex',
           transition: 'transform 0.5s ease',
-          transform: `translateX(-${currentIndex * 12.5}%)`,
+          // transform 12.5% with calculate the padding 4px
+          transform: `translateX(-${14.2 * currentIndex}%)`,
           width: '600%', // Assuming 4 cards visible at once
         }}
       >
         {cards.map((book, index) => (
-          <Box
-            key={index}
-            sx={{
-              width: '25%', // 4 cards visible at a time
-              boxSizing: 'border-box',
-              padding: '4px', // Optional: Adjust padding between cards
-            }}
-          >
+          <Grid item key={index} xs={12} md={6} lg={3} spacing={2}>
             <BookCard book={book} />
-          </Box>
+          </Grid>
         ))}
-      </Box>
+      </Grid>
       <Button
         onClick={handleNext}
         sx={{ position: 'absolute', right: 0, zIndex: 1 }}

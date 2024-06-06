@@ -15,8 +15,14 @@ import {
 } from '../../redux/slices/QueryParamsSlice';
 
 const sortingOptions = [
-  { label: 'Popular', type: 'popular', sortBy: null, order: null },
-  { label: 'Recommend', type: 'recommend', sortBy: null, order: null },
+  { label: 'Popular', type: 'popular', sortBy: undefined, order: undefined },
+  {
+    label: 'Recommend',
+    type: 'recommend',
+    sortBy: undefined,
+    order: undefined,
+  },
+  { label: 'Sale', type: 'sale', sortBy: undefined, order: undefined },
   { label: 'Newest', type: null, sortBy: 'created_at', order: 'DESC' },
   { label: 'Oldest', type: null, sortBy: 'created_at', order: 'ASC' },
   { label: 'Price Low to High', type: null, sortBy: 'price', order: 'ASC' },
@@ -25,10 +31,11 @@ const sortingOptions = [
 
 const shows = [5, 20, 50, 100];
 
-function SortBook() {
-  const { type, sortBy, order, total, offset, limit } = useSelector(
+function SortBook({ total }: { total: number }) {
+  const { sortBy, order, offset, limit } = useSelector(
     (state: any) => state.queryParams,
   );
+  console.log(sortBy, order, offset, limit);
   const sortSelected = sortingOptions.find(
     (option) => option.sortBy === sortBy && option.order === order,
   );
@@ -44,6 +51,7 @@ function SortBook() {
     const sortOption = sortingOptions.find((option) => option.label === value);
     dispatch(
       setQueryParams({
+        type: sortOption?.type,
         sortBy: sortOption?.sortBy,
         order: sortOption?.order,
       }),

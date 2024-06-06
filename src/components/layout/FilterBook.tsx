@@ -26,12 +26,12 @@ import { ExpandLess, ExpandMore, Search } from '@mui/icons-material';
 import { CategoryTree } from '../../utils/CategoryTree.helper';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  resetQueryParams,
   setQueryParam,
   setQueryParams,
 } from '../../redux/slices/QueryParamsSlice';
 import { debounce } from 'lodash';
 import { formatName } from '../../utils/Format.helper';
+import { PUBLISHERS_QUERY } from '../../queries/book-query';
 
 const SearchBar = () => {
   const { search } = useSelector((state: any) => state.queryParams);
@@ -76,9 +76,16 @@ const SearchBar = () => {
   );
 };
 
-const CategoryItem = ({ category }: { category: Category }) => {
+const CategoryItem = ({
+  category,
+  depth = 0,
+}: {
+  category: Category;
+  depth?: number;
+}) => {
   const [open, setOpen] = useState(false);
-  const [checked, setChecked] = useState(category.isChecked);
+  const { categories } = useSelector((state: any) => state.queryParams);
+  const [checked, setChecked] = useState(categories.includes(category.name!));
   const dispatch = useDispatch();
 
   const handleCheckbox = (name: string) => {
@@ -92,7 +99,7 @@ const CategoryItem = ({ category }: { category: Category }) => {
 
   return (
     <>
-      <ListItem>
+      <ListItem sx={{ paddingLeft: `${depth}em` }}>
         <ListItemButton sx={{ px: 0 }}>
           <FormControlLabel
             control={
@@ -112,19 +119,46 @@ const CategoryItem = ({ category }: { category: Category }) => {
         )}
       </ListItem>
       <Collapse in={open} timeout="auto" unmountOnExit>
-        <CategoryList categories={category.children} />
+        <CategoryList categories={category.children} depth={depth + 1} />
       </Collapse>
     </>
   );
 };
 
-const CategoryList = ({ categories }: { categories?: Category[] }) => {
+const CategoryList = ({
+  categories,
+  depth = 0,
+}: {
+  categories?: Category[];
+  depth?: number;
+}) => {
   return (
     <List component="nav">
       {categories?.map((category) => (
-        <CategoryItem key={category.id} category={category} />
+        <CategoryItem key={category.id} category={category} depth={depth} />
       ))}
     </List>
+  );
+};
+
+const PublisherList = () => {
+  const { data, loading, error } = useQuery(PUBLISHERS_QUERY);
+  //const { publishers } =
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error :{error.message}</p>;
+
+  // return list checkbox of publishers
+  return (
+    <FormGroup>
+      {data.publishers.map((publisher: string) => (
+        <FormControlLabel
+          key={publisher}
+          control={<Checkbox />}
+          label={formatName(publisher)}
+        />
+      ))}
+    </FormGroup>
   );
 };
 
@@ -255,12 +289,21 @@ function FilterBook({ categoriesSelected }: { categoriesSelected?: string[] }) {
   const categories = CategoryTree(addChecked);
 
   const handleResetFilter = () => {
-    dispatch(resetQueryParams());
-    window.location.reload();
+    // set categories, rating, price to default
+    dispatch(
+      setQueryParams({
+        categories: [],
+        rating: 0,
+        fromPrice: 0,
+        toPrice: 1000000,
+      }),
+    );
   };
 
   return (
     <Card>
+      <SearchBar />
+      <Divider />
       <CardContent
         sx={{
           display: 'flex',
@@ -274,14 +317,19 @@ function FilterBook({ categoriesSelected }: { categoriesSelected?: string[] }) {
         </Box>
       </CardContent>
       <Divider />
-      <SearchBar />
-      <Divider />
       <Box>
         <CardHeader title="Category" />
         <CardContent>
           <FormGroup>
             <CategoryList categories={categories} />
           </FormGroup>
+        </CardContent>
+      </Box>
+      <Divider />
+      <Box>
+        <CardHeader title="Publisher" />
+        <CardContent>
+          <PublisherList />
         </CardContent>
       </Box>
       <Divider />

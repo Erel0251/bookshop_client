@@ -1,5 +1,6 @@
 import {
   Card,
+  CardActionArea,
   CardActions,
   CardContent,
   CardMedia,
@@ -19,56 +20,58 @@ function BookCard({ book }: { book: Book }) {
 
   return (
     <Card className="card" onClick={onViewDetail}>
-      <CardMedia
-        component="img"
-        height={300}
-        image={book.img_urls[0]}
-        alt={book.title}
-        sx={{ objectFit: 'contain' }}
-      />
-      <CardContent>
-        <Typography
-          gutterBottom
-          variant="h6"
+      <CardActionArea>
+        <CardMedia
+          component="img"
+          height={300}
+          image={book.img_urls[0]}
+          alt={book.title}
+          sx={{ objectFit: 'contain' }}
+        />
+        <CardContent>
+          <Typography
+            gutterBottom
+            variant="h6"
+            sx={{
+              width: '250px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {formatName(book.title)}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {formatName(book.author ?? book.publisher)}
+          </Typography>
+        </CardContent>
+        <CardContent
           sx={{
-            width: '250px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'start',
+            gap: '0.5rem',
           }}
         >
-          {formatName(book.title)}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {formatName(book.author ?? book.publisher)}
-        </Typography>
-      </CardContent>
-      <CardContent
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'start',
-          gap: '0.5rem',
-        }}
-      >
-        {book.sale_price ? (
-          <>
-            <Typography className="card__originalPrice">
+          {book.sale_price ? (
+            <>
+              <Typography className="card__originalPrice">
+                {formatPrice(book.price, book.currency)}
+              </Typography>
+              <Typography variant="h5" color={'primary.light'}>
+                {formatPrice(book.sale_price, book.currency)}
+              </Typography>
+            </>
+          ) : (
+            <Typography variant="h5" color={'primary.light'}>
               {formatPrice(book.price, book.currency)}
             </Typography>
-            <Typography variant="h5" color={'primary.light'}>
-              {formatPrice(book.sale_price, book.currency)}
-            </Typography>
-          </>
-        ) : (
-          <Typography variant="h5" color={'primary.light'}>
-            {formatPrice(book.price, book.currency)}
-          </Typography>
-        )}
-      </CardContent>
-      <CardActions className="card__action">
-        <AddToCart book={book} />
-      </CardActions>
+          )}
+        </CardContent>
+        <CardActions className="card__action">
+          <AddToCart book={book} />
+        </CardActions>
+      </CardActionArea>
     </Card>
   );
 }

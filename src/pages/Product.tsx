@@ -1,13 +1,11 @@
 import { Add, Remove } from '@mui/icons-material';
 import {
   Box,
-  Breadcrumbs,
   Button,
   ButtonGroup,
   Card,
   CardContent,
   CardHeader,
-  CardMedia,
   Container,
   Divider,
   FormControl,
@@ -21,78 +19,16 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import Link from '@mui/material/Link';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { DETAIL_BOOK_QUERY } from '../queries/book-query';
 import { useQuery } from '@apollo/client';
 import { Book } from '../types/Book';
-import { formatName, formatPrice } from '../utils/Format.helper';
+import { formatPrice } from '../utils/Format.helper';
 import { Review } from '../types/Review';
 import { useAppSelector } from '../hooks/redux';
-import axios from 'axios';
-
-function CategoryBreadcrumb() {
-  return (
-    <div role="presentation">
-      <Breadcrumbs>
-        <Link underline="hover" color="inherit" href="/">
-          IT Book
-        </Link>
-        <Link
-          underline="hover"
-          color="inherit"
-          href="/material-ui/getting-started/installation/"
-        >
-          Database
-        </Link>
-        <Typography color="text.primary">Name Book</Typography>
-      </Breadcrumbs>
-    </div>
-  );
-}
-
-function BookDetail({ book }: { book: Book }) {
-  return (
-    <Card
-      variant="outlined"
-      sx={{
-        display: 'flex',
-        flexDirection: 'row',
-      }}
-    >
-      <Box
-        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-      >
-        <CardMedia
-          component="img"
-          width="300"
-          image={book.img_urls[0]}
-          alt={book.title}
-        />
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            {formatName(book.author ?? book.publisher)}
-          </Typography>
-        </CardContent>
-      </Box>
-      <Box
-        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-      >
-        <CardContent>
-          <Container>
-            <Typography variant="h4" gutterBottom>
-              {formatName(book.title)}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {book.overview}
-            </Typography>
-          </Container>
-        </CardContent>
-      </Box>
-    </Card>
-  );
-}
+import BookDetail from '../components/layout/BookDetail';
+import WriteReview from '../components/layout/WriteReview';
 
 function AddToCart({ book }: { book: Book }) {
   const paid = book.sale_price ?? book.price;
@@ -124,7 +60,7 @@ function AddToCart({ book }: { book: Book }) {
       </CardContent>
       <Container
         sx={{
-          height: '300px',
+          height: '230px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -192,22 +128,6 @@ function Summary() {
         </Typography>
       </Box>
     </Container>
-  );
-}
-
-function TempReview() {
-  return (
-    <Box>
-      <CardHeader title="Review Title" subheader="5 Star" />
-      <CardContent>
-        <Typography variant="body1" gutterBottom>
-          Cras quam dui, tempus et elementum sed, malesuada rhoncus ligula.
-          Curabitur tristique vehicula lacus. Sed ut neque odio
-        </Typography>
-        <Typography variant="body2">April 22, 2024</Typography>
-      </CardContent>
-      <Divider />
-    </Box>
   );
 }
 
@@ -316,99 +236,6 @@ function Reviewers({ reviews }: { reviews?: Review[] }) {
   );
 }
 
-function WriteReview({ bookId }: { bookId: string }) {
-  const user = useAppSelector((state) => state.user.user);
-
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    const data = new FormData(e.target);
-    axios
-      .post(
-        'http://localhost:3000/review',
-        {
-          book_id: bookId,
-          user_id: user?.id,
-          title: data.get('title'),
-          comment: data.get('comment'),
-          rating: data.get('rating'),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            role: user?.roles,
-          },
-          withCredentials: true,
-        },
-      )
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  return (
-    <Card variant="outlined">
-      <Box
-        component="form"
-        noValidate
-        onSubmit={handleSubmit}
-        sx={{ padding: '1rem' }}
-      >
-        <CardHeader title="Write a Review" />
-        <Divider />
-        <CardContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <TextField
-              id="title"
-              name="title"
-              label="Add a title"
-              multiline
-              rows={1}
-              defaultValue=""
-              variant="outlined"
-              fullWidth
-              required
-            />
-            <TextField
-              id="comment"
-              name="comment"
-              label="Details please! Your review helps other shoppers."
-              multiline
-              rows={4}
-              defaultValue=""
-              variant="outlined"
-              fullWidth
-              required
-            />
-            <TextField
-              id="rating"
-              name="rating"
-              label="Select a rating"
-              select
-              fullWidth
-              variant="outlined"
-              defaultValue={5}
-              required
-            >
-              {[1, 2, 3, 4, 5].map((rating) => (
-                <MenuItem value={rating} key={rating}>
-                  {rating} star
-                </MenuItem>
-              ))}
-            </TextField>
-            <Divider />
-            <Button variant="contained" color="primary" type="submit" fullWidth>
-              Submit
-            </Button>
-          </Box>
-        </CardContent>
-      </Box>
-    </Card>
-  );
-}
-
 function Product() {
   const { id } = useParams();
   const user = useAppSelector((state) => state.user.user);
@@ -420,27 +247,30 @@ function Product() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :{error.message}</p>;
 
+  /*
+  <Grid item xs={12}>
+    <CategoryBreadcrumb />
+  </Grid>
+  */
+
   return (
     <Box className="body">
       <Container>
         <Grid container spacing={4}>
           <Grid item xs={12}>
-            <CategoryBreadcrumb />
-          </Grid>
-          <Grid item xs={12}>
             <Divider />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={12} md={8}>
             <BookDetail book={data.book} />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} md={4}>
             <AddToCart book={data.book} />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={12} lg={8}>
             <Reviewers reviews={data.book.reviews} />
           </Grid>
           {user && (
-            <Grid item xs={4}>
+            <Grid item xs={12} lg={4}>
               <WriteReview bookId={data.book.id} />
             </Grid>
           )}

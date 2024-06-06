@@ -40,11 +40,12 @@ const CheckoutForm = () => {
       district: data.get('district'),
       province: data.get('province'),
       address: data.get('address'),
+      shipping: 30000,
       order_details: cartItems.map((item) => ({
         book_id: item.book.id,
         price: item.book.price,
         discount: item.book.sale_price / item.book.price,
-        total_price: item.book.sale_price || item.book.price,
+        total_price: (item.book.sale_price || item.book.price) * item.quantity,
         quantity: item.quantity,
       })),
     };

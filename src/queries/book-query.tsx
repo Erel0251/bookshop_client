@@ -8,6 +8,7 @@ export const BOOKS_QUERY = gql`
     $fromPrice: Float
     $toPrice: Float
     $offset: Float
+    $type: String
     $limit: Float
     $sortBy: String
     $order: String
@@ -18,6 +19,7 @@ export const BOOKS_QUERY = gql`
       rating: $rating
       fromPrice: $fromPrice
       toPrice: $toPrice
+      type: $type
       offset: $offset
       limit: $limit
       sortBy: $sortBy
@@ -42,6 +44,13 @@ export const BOOKS_QUERY = gql`
     }
   }
 `;
+
+export const PUBLISHERS_QUERY = gql`
+  query GetPublishers {
+    publishers
+  }
+`;
+
 export const DETAIL_BOOK_QUERY = gql`
   query GetBook($id: String!) {
     book(id: $id) {
@@ -109,6 +118,16 @@ export const DASHBOARD_BOOKS_QUERY = gql`
         sale_price
         currency
       }
+    }
+    popular {
+      id
+      title
+      author
+      publisher
+      img_urls
+      price
+      sale_price
+      currency
     }
   }
 `;

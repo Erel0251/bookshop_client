@@ -54,14 +54,8 @@ function Shop() {
   return (
     <Box className="body">
       <Grid container spacing={2}>
-        <Grid item xs={0} md={3}>
-          <FilterBook
-            search={params.search}
-            categoriesSelected={params.categories}
-            fromPrice={params.fromPrice}
-            toPrice={params.toPrice}
-            rating={params.rating}
-          />
+        <Grid item md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
+          <FilterBook />
         </Grid>
         <Grid item xs>
           <Container
@@ -72,13 +66,7 @@ function Shop() {
               gap: '2rem',
             }}
           >
-            <SortBook
-              sortBy={params.sortBy}
-              order={params.order}
-              total={data.books.total}
-              offset={params.offset}
-              limit={params.limit}
-            />
+            <SortBook total={data.books.total} />
             <ListProducts books={data.books.data} />
             <Pagination
               count={pageCount}

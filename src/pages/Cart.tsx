@@ -13,7 +13,8 @@ import { useEffect } from 'react';
 import { User } from '../types/User';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { formatPrice } from '../utils/Format.helper';
-//import axios from 'axios';
+import axios from 'axios';
+import { debounce } from 'lodash';
 
 function PlaceOrder() {
   const cart = useAppSelector((state) => state.cart.items);
@@ -87,9 +88,15 @@ function PlaceOrder() {
           </Grid>
         </Grid>
         <Box sx={{ m: '1rem' }}>
-          <Button href="/checkout" variant="outlined" fullWidth>
-            Place Order
-          </Button>
+          {cart.length > 0 ? (
+            <Button href="/checkout" variant="outlined" fullWidth>
+              Place Order
+            </Button>
+          ) : (
+            <Button variant="outlined" fullWidth disabled>
+              Empty Cart
+            </Button>
+          )}
         </Box>
       </Container>
     </Card>
@@ -101,21 +108,29 @@ function Cart() {
   const user = useAppSelector((state) => state.user.user as User);
 
   useEffect(() => {
-    if (user) {
-      /*
-      axios.get('/cart')
-        .then(response => {
-          dispatch(loadCart(response.data));
-        })
-        .catch(error => {
-          console.error('Failed to load cart', error);
-        });
-      */
-    }
+    const loadCart = debounce(() => {
+      if (user) {
+        axios
+          .get('/cart')
+          .then((response) => {
+            dispatch(loadCart(response.data));
+          })
+          .catch((error) => {
+            console.error('Failed to load cart', error);
+          });
+      }
+    }, 300); // 300ms debounce
+
+    loadCart();
+
+    // Cleanup
+    return () => {
+      loadCart.cancel();
+    };
   }, [user, dispatch]);
 
   return (
-    <Box className="body">
+    <Box className="body" flexGrow={1}>
       <Container>
         <Grid container spacing={4}>
           <Grid item xs={12}>
@@ -126,10 +141,10 @@ function Cart() {
           <Grid item xs={12}>
             <Divider />
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={12} md={7} lg={9}>
             <DataTable />
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={12} md={5} lg={3}>
             <PlaceOrder />
           </Grid>
         </Grid>
