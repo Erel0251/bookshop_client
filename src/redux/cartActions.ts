@@ -1,4 +1,5 @@
 import { Book } from '../types/Book';
+import { CartItem } from './slices/CartReducer';
 
 // src/redux/actions/cartActions.ts
 export const ADD_TO_CART = 'ADD_TO_CART';
@@ -7,7 +8,7 @@ export const LOAD_CART = 'LOAD_CART';
 
 interface AddToCartAction {
   type: typeof ADD_TO_CART;
-  payload: Book;
+  payload: CartItem;
 }
 
 interface RemoveFromCartAction {
@@ -25,7 +26,7 @@ export type CartActionTypes =
   | RemoveFromCartAction
   | LoadCartAction;
 
-export const addToCart = (book: Book): AddToCartAction => ({
+export const addToCart = (book: CartItem): AddToCartAction => ({
   type: ADD_TO_CART,
   payload: book,
 });

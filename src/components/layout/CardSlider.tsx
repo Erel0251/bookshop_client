@@ -87,7 +87,7 @@ export const CardSliderV2 = ({ cards }: { cards: Book[] }) => {
         <BookCard key={index} book={book} />
       ))}
     </Carousel>
-  )
-}
+  );
+};
 
 export default CardSlider;
