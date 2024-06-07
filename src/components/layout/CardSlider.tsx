@@ -3,6 +3,7 @@ import { Button, Box, Grid } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { Book } from '../../types/Book';
 import BookCard from './BookCard';
+import Carousel from 'react-material-ui-carousel';
 
 const CardSlider = ({ cards }: { cards: Book[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -66,5 +67,27 @@ const CardSlider = ({ cards }: { cards: Book[] }) => {
     </Box>
   );
 };
+
+export const CardSliderV2 = ({ cards }: { cards: Book[] }) => {
+  return (
+    <Carousel
+      sx={{ width: '100%', overflow: 'hidden' }}
+      autoPlay={true}
+      animation="slide"
+      navButtonsAlwaysVisible={true}
+      navButtonsProps={{
+        style: {
+          backgroundColor: 'white',
+          color: 'black',
+          opacity: 0.5,
+        },
+      }}
+    >
+      {cards.map((book, index) => (
+        <BookCard key={index} book={book} />
+      ))}
+    </Carousel>
+  )
+}
 
 export default CardSlider;
