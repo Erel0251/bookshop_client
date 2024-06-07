@@ -20,7 +20,7 @@ interface PayloadAction {
   payload: {
     name: string;
     value: string | number;
-  }
+  };
 }
 
 const defaults = {
@@ -51,7 +51,10 @@ const queryParamsSlice = createSlice({
           );
         } else {
           // Add the category if it doesn't exist
-          state[action.payload.name] = [...categories, action.payload.value as string];
+          state[action.payload.name] = [
+            ...categories,
+            action.payload.value as string,
+          ];
         }
       } else if (action.payload.name === 'publishers') {
         const publishers = state[action.payload.name] || [];
@@ -62,8 +65,13 @@ const queryParamsSlice = createSlice({
           );
         } else {
           // Add the publisher if it doesn't exist
-          state[action.payload.name] = [...publishers, action.payload.value as string];
+          state[action.payload.name] = [
+            ...publishers,
+            action.payload.value as string,
+          ];
         }
+      } else {
+        state[action.payload.name] = action.payload.value;
       }
     },
     setQueryParams: (state: QueryParamsState, action) => {

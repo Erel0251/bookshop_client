@@ -29,7 +29,7 @@ const sortingOptions = [
   { label: 'Price High to Low', type: null, sortBy: 'price', order: 'DESC' },
 ];
 
-const shows = [5, 20, 50, 100];
+const shows = [5, 10, 20, 50];
 
 function SortBook({ total }: { total: number }) {
   const { sortBy, order, offset, limit } = useSelector(
@@ -61,7 +61,7 @@ function SortBook({ total }: { total: number }) {
   const handleShowChange = (event: SelectChangeEvent) => {
     const value = +event.target.value;
     setShow(value);
-    dispatch(setQueryParam({ name: 'limit', value }));
+    dispatch(setQueryParams({ offset: 0, limit: value }));
   };
 
   return (
@@ -75,7 +75,7 @@ function SortBook({ total }: { total: number }) {
       }}
     >
       <Typography variant="body1">
-        Showing {offset + 1}-{Math.min(limit, total)} of {total} books
+        Showing {offset + 1}-{Math.min(limit + offset, total)} of {total} books
       </Typography>
       <Box
         sx={{

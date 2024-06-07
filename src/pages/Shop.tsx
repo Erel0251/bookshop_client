@@ -7,6 +7,8 @@ import { BOOKS_QUERY } from '../queries/book-query';
 import { useSelector } from 'react-redux';
 import FilterBook from '../components/layout/FilterBook';
 import SortBook from '../components/layout/SortBook';
+import { useAppDispatch } from '../hooks/redux';
+import { setQueryParams } from '../redux/slices/QueryParamsSlice';
 
 function ListProducts({ books }: { books: Book[] }) {
   return (
@@ -21,6 +23,7 @@ function ListProducts({ books }: { books: Book[] }) {
 }
 
 function Shop() {
+  const dispatch = useAppDispatch();
   const params = useSelector((state: any) => state.queryParams);
 
   const { data, loading, error, refetch } = useQuery(BOOKS_QUERY, {
@@ -47,9 +50,9 @@ function Shop() {
   const pageCount = Math.ceil(data.books.total / params.limit);
 
   const onChangePage = (event: any, page: number) => {
-    console.log(event.target);
+    console.log(event.target.value, page);
     const offset = (page - 1) * params.limit;
-    refetch({ ...params, offset });
+    dispatch(setQueryParams({ offset }));
   };
 
   return (

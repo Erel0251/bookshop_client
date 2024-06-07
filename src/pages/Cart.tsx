@@ -133,10 +133,10 @@ function Cart() {
           <Grid item xs={12}>
             <Divider />
           </Grid>
-          <Grid item xs={12} md={7} lg={9}>
+          <Grid item xs={12} lg={8}>
             <DataTable />
           </Grid>
-          <Grid item xs={12} md={5} lg={3}>
+          <Grid item xs={12} lg={4}>
             <PlaceOrder />
           </Grid>
         </Grid>

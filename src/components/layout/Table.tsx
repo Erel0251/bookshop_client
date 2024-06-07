@@ -156,42 +156,6 @@ export default function DataTable() {
     },
   ];
 
-  const cartRowsSample = [
-    {
-      id: 1,
-      img: 'https://edit.org/images/cat/book-covers-big-2019101610.jpg',
-      title: 'Book 1',
-      author: 'Author 1',
-      price: 100,
-      sale_price: 90,
-      currency: 'USD',
-      quantity: 1,
-      total: 100,
-    },
-    {
-      id: 2,
-      img: 'https://edit.org/images/cat/book-covers-big-2019101610.jpg',
-      title: 'Book 2',
-      author: 'Author 2',
-      price: 200,
-      sale_price: null,
-      currency: 'USD',
-      quantity: 2,
-      total: 360,
-    },
-    {
-      id: 3,
-      img: 'https://edit.org/images/cat/book-covers-big-2019101610.jpg',
-      title: 'Book 3',
-      author: 'Author 3',
-      price: 300,
-      sale_price: 270,
-      currency: 'USD',
-      quantity: 3,
-      total: 810,
-    },
-  ];
-
   const cartRows = cartItems?.map((item) => ({
     id: item.book.id,
     img: item.book.img_urls[0],
