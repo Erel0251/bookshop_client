@@ -14,9 +14,13 @@ import BookCard from '../components/layout/BookCard';
 import CardSlider from '../components/layout/CardSlider';
 import { DASHBOARD_BOOKS_QUERY } from '../queries/book-query';
 import { useState } from 'react';
+import { LowestPromotionPrice } from '../utils/LowestPromotionPrice.helper';
 
 const SelectSlider = ({ data }: { data: any }) => {
   const [selectedSlider, setSelectedSlider] = useState('sale');
+
+  const sales = LowestPromotionPrice(data.sale);
+  const recommends = LowestPromotionPrice(data.recommend);
 
   return (
     <Box
@@ -31,12 +35,8 @@ const SelectSlider = ({ data }: { data: any }) => {
       </ButtonGroup>
 
       {selectedSlider === 'popular' && <CardSlider cards={data.popular} />}
-      {selectedSlider === 'sale' && (
-        <CardSlider cards={data.sale[0].promotion_books} />
-      )}
-      {selectedSlider === 'recommend' && (
-        <CardSlider cards={data.recommend[0].promotion_books} />
-      )}
+      {selectedSlider === 'sale' && <CardSlider cards={sales} />}
+      {selectedSlider === 'recommend' && <CardSlider cards={recommends} />}
     </Box>
   );
 };
