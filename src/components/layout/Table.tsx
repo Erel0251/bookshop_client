@@ -1,16 +1,50 @@
 import { Add, Remove } from '@mui/icons-material';
-import { Box, ButtonGroup, IconButton, Input, Typography } from '@mui/material';
+import {
+  Box,
+  ButtonGroup,
+  Card,
+  CardContent,
+  IconButton,
+  Input,
+  Typography,
+} from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import {
   removeFromCart,
   updateCartItemQuantity,
 } from '../../redux/slices/CartReducer';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { useCallback } from 'react';
+import { debounce } from 'lodash';
 // url cover example: https://edit.org/images/cat/book-covers-big-2019101610.jpg
 
 export default function DataTable() {
   const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user.user);
   const cartItems = useAppSelector((state) => state.cart.items);
+
+  const updateCartUser = useCallback(
+    debounce(async (book_id: string, user_id: string, quantity: number) => {
+      try {
+        await fetch(`http://localhost:3000/user/${user!.id}/cart`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id,
+            book_id,
+            quantity: quantity,
+            update_type: 'Update',
+          }),
+        });
+      } catch (error) {
+        console.error('Failed to update cart', error);
+      }
+    }, 1000),
+    [],
+  );
+
   const formatPrice = (price: number, currency: string) =>
     price.toLocaleString('vi-VN', {
       style: 'currency',
@@ -27,6 +61,9 @@ export default function DataTable() {
       dispatch(removeFromCart(row.id));
     }
     dispatch(updateCartItemQuantity({ id: row.id, quantity: row.quantity }));
+    if (user) {
+      updateCartUser(row.id, user.id!, row.quantity);
+    }
   };
 
   const onClickPlus = (row: any) => {
@@ -36,7 +73,26 @@ export default function DataTable() {
     row.quantity = parseInt(row.quantity) + 1;
     quantity.value = row.quantity.toString();
     dispatch(updateCartItemQuantity({ id: row.id, quantity: row.quantity }));
+    if (user) {
+      updateCartUser(row.id, user.id!, row.quantity);
+    }
   };
+
+  const onChangeInput = (row: any) => (event: any) => {
+    const quantity = event.target.value;
+    if (quantity < 1) {
+      return;
+    }
+    // check if quantity is a number and is integer
+    if (!/^\d+$/.test(quantity)) {
+      return;
+    }
+    row.quantity = parseInt(quantity);
+    dispatch(updateCartItemQuantity({ id: row.id, quantity: row.quantity }));
+    if (user) {
+      updateCartUser(row.id, user.id!, quantity);
+    }
+  }
 
   const cartColumns: GridColDef[] = [
     {
@@ -129,6 +185,7 @@ export default function DataTable() {
             id={`quantity${params.row.id}`}
             type="text"
             placeholder={params.row.quantity + ''}
+            onChange={onChangeInput(params.row)}
             sx={{ width: '2rem' }}
           />
           <IconButton onClick={() => onClickPlus(params.row)}>
@@ -170,12 +227,22 @@ export default function DataTable() {
 
   return (
     <div style={{ width: '100%' }}>
-      <DataGrid
-        rows={cartRows ?? cartRowsSample}
-        rowHeight={200}
-        columns={cartColumns}
-        pageSizeOptions={[5, 10]}
-      />
+      {cartRows.length === 0 ? (
+        <Card>
+          <CardContent>
+            <Typography variant="h4" align="center">
+              Your cart is empty
+            </Typography>
+          </CardContent>
+        </Card>
+      ) : (
+        <DataGrid
+          rows={cartRows}
+          rowHeight={200}
+          columns={cartColumns}
+          pageSizeOptions={[5, 10]}
+        />
+      )}
     </div>
   );
 }

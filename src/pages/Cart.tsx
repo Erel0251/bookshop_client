@@ -13,8 +13,8 @@ import { useEffect } from 'react';
 import { User } from '../types/User';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { formatPrice } from '../utils/Format.helper';
-// import axios from 'axios';
-// import { debounce } from 'lodash';
+import axios from 'axios';
+import { loadCart } from '../redux/slices/CartReducer';
 
 function PlaceOrder() {
   const cart = useAppSelector((state) => state.cart.items);
@@ -109,15 +109,15 @@ function Cart() {
 
   useEffect(() => {
     if (user) {
-      /*
-      axios.get(`http://localhost:3000/user/${user.id}/cart`) 
-        .then(response => {
+      axios
+        .get(`http://localhost:3000/user/${user.id}/cart`)
+        .then((response) => {
           console.log('Cart loaded', response.data);
+          dispatch(loadCart(response.data));
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Failed to load cart', error);
         });
-        */
     }
   }, [user, dispatch]);
 

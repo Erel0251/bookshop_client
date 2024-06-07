@@ -18,33 +18,24 @@ const AddToCart: React.FC<AddToCartProps> = ({ book }) => {
 
   const handleAddToCart = async (e: any) => {
     e.stopPropagation();
+    dispatch(
+      addToCart({
+        book,
+        quantity: 1,
+      }),
+    );
     if (user) {
-      dispatch(
-        addToCart({
-          book,
-          quantity: 1,
-        }),
-      );
       try {
-        const response = await axios.post(`http://localhost:3000/user/cart`, {
+        await axios.post(`http://localhost:3000/user/cart`, {
           user_id: user.id,
           book_id: book.id,
           quantity: 1,
           update_type: 'Append',
         });
-        //dispatch(addToCart(response.data));
       } catch (error) {
         console.error('Failed to add item to cart', error);
       }
-    } else {
-      // For anonymous users, add to cart in the local state
-      dispatch(
-        addToCart({
-          book,
-          quantity: 1,
-        }),
-      );
-    }
+    } 
     console.log(cart);
   };
 
