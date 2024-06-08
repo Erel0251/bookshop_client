@@ -68,9 +68,7 @@ function About() {
       .then((response) => {
         setData(response.data);
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
   }, []);
 
   return (

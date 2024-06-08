@@ -30,7 +30,6 @@ function PlaceOrder() {
   const currency = cart[0]?.book.currency || 'VND';
   const ship = 30000;
   const total = price - sale_price + ship;
-  console.log(price, sale_price);
 
   return (
     <Card>
@@ -112,7 +111,6 @@ function Cart() {
       axios
         .get(`http://localhost:3000/user/${user.id}/cart`)
         .then((response) => {
-          console.log('Cart loaded', response.data);
           dispatch(loadCart(response.data));
         })
         .catch((error) => {

@@ -61,9 +61,7 @@ const CheckoutForm = () => {
         dispatch(clearCart());
         window.location.href = '/order-success';
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
   };
 
   return (

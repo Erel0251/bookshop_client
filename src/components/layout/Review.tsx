@@ -43,8 +43,8 @@ function Summary({
   details?: number[];
 }) {
   const dispatch = useAppDispatch();
-  const choosed = useAppSelector((state: any) => state.review.rating);
-  console.log(choosed);
+  //const choosed = useAppSelector((state: any) => state.review.rating);
+
   const handleOnClick = (rating: number) => {
     dispatch(clearQueryParams());
     dispatch(setReviewQueryParam({ name: 'rating', value: rating }));
@@ -225,7 +225,6 @@ function Reviewers({
     : Math.ceil(total / limit);
   const count = rating ? details[rating - 1] : total;
   const onChangePage = (event: any, page: number) => {
-    console.log(event.target.value, page);
     const offset = (page - 1) * limit;
     dispatch(setReviewQueryParam({ name: 'offset', value: offset }));
   };
@@ -257,9 +256,11 @@ function Reviewers({
           />
         </>
       ) : (
-        <Typography variant="body1" color="initial">
-          No reviews found
-        </Typography>
+        <Box sx={{ height: '300px', display: 'grid', placeItems: 'center' }}>
+          <Typography variant="body1" color="initial">
+            No reviews yet
+          </Typography>
+        </Box>
       )}
     </Card>
   );

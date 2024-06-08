@@ -213,7 +213,6 @@ const PriceSlider = () => {
     newValue: number | number[],
     activeThumb: number,
   ) => {
-    console.log(event.target);
     if (!Array.isArray(newValue)) {
       return;
     }
@@ -244,38 +243,48 @@ const PriceSlider = () => {
 };
 
 const RatingList = () => {
-  //const rating = useSelector((state: any) => state.queryParams.rating);
+  const rating = useSelector((state: any) => state.queryParams.rating);
+  const [hover, setHover] = useState(-1);
   const dispatch = useDispatch();
 
-  const handleRating = (rating: number) => {
+  const handleRating = (rating: number | null) => {
     dispatch(setQueryParam({ name: 'rating', value: rating }));
   };
 
-  const stars = [5, 4, 3, 2, 1];
+  const labels: { [index: string]: string } = {
+    0: 'All',
+    1: 'Poor',
+    2: 'Fair',
+    3: 'Good',
+    4: 'Very Good',
+    5: 'Excellent',
+  };
 
   return (
     <Box
       sx={{
-        marginX: '2rem',
+        marginLeft: '2rem',
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
+        justifyContent: 'start',
+        alignItems: 'center',
         gap: '0.2rem',
       }}
     >
-      {stars.map((star) => (
-        <Box
-          key={star}
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '0.5rem',
-          }}
-          onClick={() => handleRating(star)}
-        >
-          <Rating name="read-only" value={star} size="small" readOnly />
-          <Typography variant="body1">{star} Star</Typography>
-        </Box>
-      ))}
+      <Rating
+        size="large"
+        value={rating}
+        getLabelText={(value) =>
+          `${value} Star${value !== 1 ? 's' : ''}, ${labels[value]}`
+        }
+        onChangeActive={(event, newHover) => {
+          setHover(newHover);
+        }}
+        onChange={(e, value) => handleRating(value)}
+      />
+      {rating !== null && (
+        <Box sx={{ ml: 2 }}>{labels[hover !== -1 ? hover : rating]}</Box>
+      )}
     </Box>
   );
 };

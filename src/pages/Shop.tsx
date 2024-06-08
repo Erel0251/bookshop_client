@@ -50,7 +50,6 @@ function Shop() {
   const pageCount = Math.ceil(data.books.total / params.limit);
 
   const onChangePage = (event: any, page: number) => {
-    console.log(event.target.value, page);
     const offset = (page - 1) * params.limit;
     dispatch(setQueryParams({ offset }));
   };

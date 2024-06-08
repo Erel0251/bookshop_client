@@ -53,9 +53,7 @@ export default function SignUp() {
         localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
         window.location.href = '/';
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
   };
 
   return (

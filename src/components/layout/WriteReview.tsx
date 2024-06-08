@@ -35,12 +35,8 @@ function WriteReview({ bookId }: { bookId: string }) {
           withCredentials: true,
         },
       )
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      .then((response) => {})
+      .catch((error) => {});
   };
 
   return (

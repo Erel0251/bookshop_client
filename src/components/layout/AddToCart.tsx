@@ -14,7 +14,7 @@ interface AddToCartProps {
 const AddToCart: React.FC<AddToCartProps> = ({ book }) => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state: any) => state.user as User);
-  const cart = useAppSelector((state: any) => state.cart);
+  //const cart = useAppSelector((state: any) => state.cart);
 
   const handleAddToCart = async (e: any) => {
     e.stopPropagation();
@@ -36,7 +36,6 @@ const AddToCart: React.FC<AddToCartProps> = ({ book }) => {
         console.error('Failed to add item to cart', error);
       }
     }
-    console.log(cart);
   };
 
   return (

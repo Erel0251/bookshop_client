@@ -20,7 +20,5 @@ export const CategoryTree = (categories: Category[]) => {
     }
   });
 
-  console.log(categoryTree);
-
   return categoryTree;
 };
