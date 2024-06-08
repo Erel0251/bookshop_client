@@ -54,7 +54,14 @@ export const PUBLISHERS_QUERY = gql`
 `;
 
 export const DETAIL_BOOK_QUERY = gql`
-  query GetBook($id: String!) {
+  query GetBook(
+    $id: String!
+    $rating: Float
+    $offset: Float
+    $limit: Float
+    $sortBy: String
+    $order: String
+  ) {
     book(id: $id) {
       id
       title
@@ -71,10 +78,22 @@ export const DETAIL_BOOK_QUERY = gql`
         id
         name
       }
-      reviews {
-        title
-        comment
-        rating
+      reviews(
+        rating: $rating
+        offset: $offset
+        limit: $limit
+        sortBy: $sortBy
+        order: $order
+      ) {
+        total
+        average
+        details
+        data {
+          title
+          rating
+          comment
+          created_at
+        }
       }
     }
   }

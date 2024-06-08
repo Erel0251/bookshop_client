@@ -35,7 +35,7 @@ const AddToCart: React.FC<AddToCartProps> = ({ book }) => {
       } catch (error) {
         console.error('Failed to add item to cart', error);
       }
-    } 
+    }
     console.log(cart);
   };
 

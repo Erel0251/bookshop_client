@@ -92,7 +92,7 @@ export default function DataTable() {
     if (user) {
       updateCartUser(row.id, user.id!, quantity);
     }
-  }
+  };
 
   const cartColumns: GridColDef[] = [
     {

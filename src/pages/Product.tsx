@@ -22,7 +22,8 @@ import BookDetail from '../components/layout/BookDetail';
 import WriteReview from '../components/layout/WriteReview';
 import { addToCart } from '../redux/slices/CartReducer';
 import axios from 'axios';
-import Reviewers from '../components/layout/Revies';
+import Reviewers from '../components/layout/Review';
+import { useEffect } from 'react';
 
 function AddToCart({ book }: { book: Book }) {
   const dispatch = useAppDispatch();
@@ -128,14 +129,18 @@ function AddToCart({ book }: { book: Book }) {
   );
 }
 
-
 function Product() {
   const { id } = useParams();
   const user = useAppSelector((state) => state.user.user);
+  const params = useAppSelector((state) => state.review);
 
-  const { data, loading, error } = useQuery(DETAIL_BOOK_QUERY, {
-    variables: { id },
+  const { data, loading, error, refetch } = useQuery(DETAIL_BOOK_QUERY, {
+    variables: { id, ...params },
   });
+
+  useEffect(() => {
+    refetch({ id, ...params });
+  }, [id, params, refetch]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :{error.message}</p>;
@@ -160,7 +165,12 @@ function Product() {
             <AddToCart book={data.book} />
           </Grid>
           <Grid item xs={12} lg={8}>
-            <Reviewers reviews={data.book.reviews} />
+            <Reviewers
+              total={data.book.reviews.total}
+              average={data.book.reviews.average}
+              details={data.book.reviews.details}
+              reviews={data.book.reviews.data}
+            />
           </Grid>
           {user && (
             <Grid item xs={12} lg={4}>

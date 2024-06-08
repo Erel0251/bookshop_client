@@ -6,12 +6,14 @@ import queryParamsSlice from './slices/QueryParamsSlice';
 import cartReducer from './slices/CartReducer';
 import userReducer from './slices/UserSlice';
 import bookReducer from './slices/BookSlice';
+import reviewReducer from './slices/ReviewSlice';
 
 const reducers = {
   queryParams: queryParamsSlice,
   cart: cartReducer,
   user: userReducer,
   book: bookReducer,
+  review: reviewReducer,
 };
 
 const persistConfig = {
@@ -26,6 +28,7 @@ const rootReducer = (state: any, action: any) => {
     cart: reducers.cart(state?.cart, action),
     user: reducers.user(state?.user, action),
     book: reducers.book(state?.book, action),
+    review: reducers.review(state?.review, action),
   };
 };
 

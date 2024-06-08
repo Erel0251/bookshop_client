@@ -9,10 +9,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  setQueryParam,
-  setQueryParams,
-} from '../../redux/slices/QueryParamsSlice';
+import { setQueryParams } from '../../redux/slices/QueryParamsSlice';
 
 const sortingOptions = [
   { label: 'Popular', type: 'popular', sortBy: undefined, order: undefined },
@@ -35,7 +32,6 @@ function SortBook({ total }: { total: number }) {
   const { sortBy, order, offset, limit } = useSelector(
     (state: any) => state.queryParams,
   );
-  console.log(sortBy, order, offset, limit);
   const sortSelected = sortingOptions.find(
     (option) => option.sortBy === sortBy && option.order === order,
   );

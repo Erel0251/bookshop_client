@@ -19,6 +19,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { logoutUser } from '../../redux/slices/UserSlice';
 import { User } from '../../types/User';
 import axios from 'axios';
+import { clearCart } from '../../redux/slices/CartReducer';
 
 const Anynomous = () => {
   return (
@@ -67,10 +68,12 @@ const Customer = ({ name }: { name: string }) => {
       .post('http://localhost:3000/auth/logout')
       .then(() => {
         dispatch(logoutUser());
+        dispatch(clearCart());
         window.location.reload();
       })
       .catch(() => {
         dispatch(logoutUser());
+        dispatch(clearCart());
         window.location.reload();
       });
   };
