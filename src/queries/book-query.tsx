@@ -72,6 +72,7 @@ export const DETAIL_BOOK_QUERY = gql`
       isbn
       inventory
       price
+      status
       sale_price
       currency
       category {
@@ -109,6 +110,7 @@ export const DASHBOARD_BOOKS_QUERY = gql`
         publisher
         img_urls
         price
+        status
         sale_price
         currency
         inventory

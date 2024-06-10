@@ -19,16 +19,14 @@ import { loadCart } from '../redux/slices/CartReducer';
 function PlaceOrder() {
   const cart = useAppSelector((state) => state.cart.items);
 
-  const price = cart.reduce(
-    (acc, item) => acc + item.book.price * item.quantity,
-    0,
-  );
-  const sale_price = cart.reduce(
-    (acc, item) => acc + item.book.sale_price * item.quantity,
-    0,
-  );
+  const price = cart
+    ? cart.reduce((acc, item) => acc + item.book.price * item.quantity, 0)
+    : 0;
+  const sale_price = cart
+    ? cart.reduce((acc, item) => acc + item.book.sale_price * item.quantity, 0)
+    : 0;
   const currency = cart[0]?.book.currency || 'VND';
-  const ship = 30000;
+  const ship = price != 0 ? 30000 : 0;
   const total = price - sale_price + ship;
 
   return (
@@ -109,12 +107,20 @@ function Cart() {
   useEffect(() => {
     if (user) {
       axios
-        .get(`http://localhost:3000/user/${user.id}/cart`)
+        .get(`http://localhost:3000/user/${user.id}/cart`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            role: user?.roles,
+          },
+          withCredentials: true,
+        })
         .then((response) => {
+          console.log(response.data);
           dispatch(loadCart(response.data));
         })
         .catch((error) => {
-          console.error('Failed to load cart', error);
+          console.error(error);
+          window.location.href = '/login';
         });
     }
   }, [user, dispatch]);

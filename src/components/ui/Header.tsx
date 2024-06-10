@@ -69,11 +69,16 @@ const Customer = ({ name }: { name: string }) => {
       .then(() => {
         dispatch(logoutUser());
         dispatch(clearCart());
+        // clear token
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
         window.location.reload();
       })
       .catch(() => {
         dispatch(logoutUser());
         dispatch(clearCart());
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
         window.location.reload();
       });
   };

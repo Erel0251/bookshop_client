@@ -44,7 +44,10 @@ const CheckoutForm = () => {
       order_details: cartItems.map((item) => ({
         book_id: item.book.id,
         price: item.book.price,
-        discount: item.book.sale_price / item.book.price,
+        discount:
+          item.book.sale_price !== item.book.price
+            ? item.book.sale_price / item.book.price
+            : 0,
         total_price: (item.book.sale_price || item.book.price) * item.quantity,
         quantity: item.quantity,
       })),
@@ -59,9 +62,23 @@ const CheckoutForm = () => {
       })
       .then(() => {
         dispatch(clearCart());
-        window.location.href = '/order-success';
+        // clear cart of user
+        axios
+          .delete(`http://localhost:3000/user/${user?.id}/cart`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+              role: user?.roles,
+            },
+            withCredentials: true,
+          })
+          .then(() => {
+            window.location.href = '/order-success';
+          });
       })
-      .catch((error) => {});
+      .catch((error) => {
+        console.log(error.response.data.message);
+        window.location.href = '/login';
+      });
   };
 
   return (
@@ -239,12 +256,12 @@ const OrderSummary = ({
             <Grid item xs={12}>
               <Divider />
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={5}>
               <Typography variant="h5" fontWeight={600}>
                 Final Price:
               </Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={7}>
               <Typography textAlign={'right'} variant="h5" fontWeight={600}>
                 {formatPrice(total, currency)}
               </Typography>
@@ -258,12 +275,16 @@ const OrderSummary = ({
 
 function CheckOut() {
   const cartItems = useAppSelector((state) => state.cart.items);
+  console.log(cartItems);
   const items = cartItems.map((item) => ({
     name: item.book.title,
     image: item.book.img_urls[0],
     quantity: item.quantity,
     price: item.book.price,
-    sale_price: item.book.sale_price,
+    sale_price:
+      item.book.sale_price && item.book.sale_price !== item.book.price
+        ? item.book.sale_price
+        : undefined,
   }));
 
   const totalPrice = items.reduce(

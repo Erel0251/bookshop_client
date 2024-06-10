@@ -45,11 +45,15 @@ export default function SignIn() {
       })
       .then((response) => {
         dispatch(loginUser(response.data.user as User));
+        console.log(response.data.user);
         localStorage.setItem('accessToken', response.data.tokens.accessToken);
         localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
         window.location.href = '/';
       })
-      .catch((error) => {});
+      .catch((error) => {
+        console.error(error);
+        alert('Login failed');
+      });
   };
 
   return (

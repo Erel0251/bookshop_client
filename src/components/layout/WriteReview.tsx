@@ -35,8 +35,14 @@ function WriteReview({ bookId }: { bookId: string }) {
           withCredentials: true,
         },
       )
-      .then((response) => {})
-      .catch((error) => {});
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+        // redirect to login page
+        window.location.href = '/login';
+      });
   };
 
   return (

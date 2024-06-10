@@ -13,7 +13,7 @@ interface AddToCartProps {
 
 const AddToCart: React.FC<AddToCartProps> = ({ book }) => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state: any) => state.user as User);
+  const user = useAppSelector((state: any) => state.user.user as User);
   //const cart = useAppSelector((state: any) => state.cart);
 
   const handleAddToCart = async (e: any) => {
@@ -25,15 +25,26 @@ const AddToCart: React.FC<AddToCartProps> = ({ book }) => {
       }),
     );
     if (user) {
+      console.log('user', user.id, 'book', book.id);
       try {
-        await axios.post(`http://localhost:3000/user/cart`, {
-          user_id: user.id,
-          book_id: book.id,
-          quantity: 1,
-          update_type: 'Append',
-        });
+        await axios.post(
+          `http://localhost:3000/user/cart`,
+          {
+            user_id: user.id,
+            book_id: book.id,
+            quantity: 1,
+            update_type: 'Append',
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+              role: user?.roles,
+            },
+            withCredentials: true,
+          },
+        );
       } catch (error) {
-        console.error('Failed to add item to cart', error);
+        alert('Failed to add item to cart');
       }
     }
   };
@@ -45,6 +56,9 @@ const AddToCart: React.FC<AddToCartProps> = ({ book }) => {
       color="primary"
       fullWidth
       onClick={handleAddToCart}
+      disabled={
+        (book.status && book.status !== 'AVAILABLE') || book.inventory === 0
+      }
     >
       Add to Cart
     </Button>

@@ -22,6 +22,7 @@ export default function DataTable() {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user.user);
   const cartItems = useAppSelector((state) => state.cart.items);
+  console.log(cartItems);
 
   const updateCartUser = useCallback(
     debounce(async (book_id: string, user_id: string, quantity: number) => {
@@ -150,7 +151,8 @@ export default function DataTable() {
             justifyContent: 'center',
           }}
         >
-          {params.row.sale_price ? (
+          {params.row.sale_price &&
+          params.row.sale_price !== params.row.price ? (
             <>
               <Typography className="card__originalPrice">
                 {formatPrice(params.row.price, params.row.currency)}
@@ -213,17 +215,19 @@ export default function DataTable() {
     },
   ];
 
-  const cartRows = cartItems?.map((item) => ({
-    id: item.book.id,
-    img: item.book.img_urls[0],
-    title: item.book.title,
-    author: item.book.author ?? item.book.publisher,
-    price: item.book.price,
-    sale_price: item.book.sale_price,
-    currency: item.book.currency ?? 'VND',
-    quantity: item.quantity,
-    total: (item.book.sale_price ?? item.book.price) * item.quantity,
-  }));
+  const cartRows = cartItems
+    ?.filter((item) => item.book.id !== null)
+    .map((item) => ({
+      id: item.book.id ?? 1,
+      img: item.book.id ? item.book.img_urls[0] : '',
+      title: item.book.title ?? '',
+      author: item.book.author ?? item.book.publisher,
+      price: item.book.price ?? 0,
+      sale_price: item.book.sale_price ?? undefined,
+      currency: item.book.currency ?? 'VND',
+      quantity: item.quantity ?? 0,
+      total: (item.book.sale_price ?? item.book.price) * item.quantity,
+    }));
 
   return (
     <div style={{ width: '100%' }}>
@@ -237,6 +241,7 @@ export default function DataTable() {
         </Card>
       ) : (
         <DataGrid
+          getRowId={(row) => row.id}
           rows={cartRows}
           rowHeight={200}
           columns={cartColumns}

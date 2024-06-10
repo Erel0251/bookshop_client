@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   CardActionArea,
   CardActions,
@@ -13,13 +14,18 @@ import AddToCart from './AddToCart';
 
 function BookCard({ book }: { book: Book }) {
   const navigate = useNavigate();
+  const color = book.status === 'COMING_SOON' ? '#4caf50' : '#f44336';
 
   const onViewDetail = () => {
     navigate(`/product/${book.id}`);
   };
 
   return (
-    <Card className="card" onClick={onViewDetail}>
+    <Card
+      sx={{ position: 'relative', cursor: 'pointer' }}
+      className="card"
+      onClick={onViewDetail}
+    >
       <CardActionArea>
         <CardMedia
           component="img"
@@ -28,6 +34,35 @@ function BookCard({ book }: { book: Book }) {
           alt={book.title}
           sx={{ objectFit: 'contain' }}
         />
+        {book.status && book.status !== 'AVAILABLE' && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              bgcolor: 'rgba(255, 255, 255, 0.4)', // semi-transparent white background
+            }}
+          >
+            <Typography
+              variant="h4"
+              align="center"
+              sx={{
+                transform: 'rotate(-23deg)',
+                color: color,
+                padding: '0.5rem',
+                border: '2px solid ' + color,
+                borderRadius: '0.5rem',
+              }} // rotate only the text
+            >
+              {book.status === 'COMING_SOON' ? 'Coming Soon' : 'Out of Stock'}
+            </Typography>
+          </Box>
+        )}
         <CardContent>
           <Typography
             gutterBottom
@@ -53,7 +88,7 @@ function BookCard({ book }: { book: Book }) {
             gap: '0.5rem',
           }}
         >
-          {book.sale_price ? (
+          {book.sale_price && book.sale_price !== book.price ? (
             <>
               <Typography className="card__originalPrice">
                 {formatPrice(book.price, book.currency)}

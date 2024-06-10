@@ -29,26 +29,41 @@ function AddToCart({ book }: { book: Book }) {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user.user);
   const paid = book.sale_price ?? book.price;
-  const original = book.sale_price ? book.price : undefined;
+  const original =
+    book.sale_price && book.sale_price !== book.price ? book.price : undefined;
 
   const handleAddToCart = async () => {
     const quantity = document.getElementById('quantity') as HTMLInputElement;
+    const totalQuantity = Math.min(
+      parseInt(quantity.value),
+      book.inventory ? book.inventory : 1,
+    );
     dispatch(
       addToCart({
         book,
-        quantity: parseInt(quantity.value),
+        quantity: totalQuantity,
       }),
     );
     if (user) {
       try {
-        await axios.post(`http://localhost:3000/user/cart`, {
-          user_id: user.id,
-          book_id: book.id,
-          quantity: parseInt(quantity.value),
-          update_type: 'Append',
-        });
+        await axios.post(
+          `http://localhost:3000/user/cart`,
+          {
+            user_id: user.id,
+            book_id: book.id,
+            quantity: totalQuantity,
+            update_type: 'Append',
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+              role: user?.roles,
+            },
+            withCredentials: true,
+          },
+        );
       } catch (error) {
-        console.error('Failed to add item to cart', error);
+        alert('Failed to add item to cart, re-login maybe?');
       }
     }
   };
@@ -97,20 +112,39 @@ function AddToCart({ book }: { book: Book }) {
         }}
       >
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography variant="h6" m={'2rem 0'} gutterBottom>
+          <Typography variant="h6" m={'2rem 0 0 0'} gutterBottom>
             Quantity
           </Typography>
+          <Typography variant="body2" m={'0 0 2rem 0'} gutterBottom>
+            ({book.inventory} in stock)
+          </Typography>
           <ButtonGroup variant="contained" color="primary" sx={{ m: '0 auto' }}>
-            <IconButton onClick={onClickMinus}>
+            <IconButton
+              disabled={
+                (book.status && book.status !== 'AVAILABLE') ||
+                book.inventory === 0
+              }
+              onClick={onClickMinus}
+            >
               <Remove />
             </IconButton>
             <Input
+              disabled={
+                (book.status && book.status !== 'AVAILABLE') ||
+                book.inventory === 0
+              }
               id="quantity"
               type="text"
               defaultValue={1}
               sx={{ width: '7rem', textAlign: 'center' }}
             />
-            <IconButton onClick={onClickPlus}>
+            <IconButton
+              disabled={
+                (book.status && book.status !== 'AVAILABLE') ||
+                book.inventory === 0
+              }
+              onClick={onClickPlus}
+            >
               <Add />
             </IconButton>
           </ButtonGroup>
@@ -121,6 +155,9 @@ function AddToCart({ book }: { book: Book }) {
           color="primary"
           onClick={handleAddToCart}
           fullWidth
+          disabled={
+            (book.status && book.status !== 'AVAILABLE') || book.inventory === 0
+          }
         >
           Add to Cart
         </Button>
