@@ -1,30 +1,77 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# BookShop Server
 
-Currently, two official plugins are available:
+## Table of Contents
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+* [Technicals](#technicals)
+* [Featuress](#features)
+* [Installation](#installation)
+* [Running the App](#running-the-app)
+* [Format](#format)
+* [Author](#author)
+* [Acknowledgements](#acknowledgements)
 
-## Expanding the ESLint configuration
+## Technicals
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- [X] [Axios](https://www.npmjs.com/package/axios)
+- [X] [Redux](https://redux.js.org/)
+- [X] [Husky](https://typicode.github.io/husky/)
+    - [X] [Prettier](https://prettier.io/)
+    - [X] [Eslint](https://eslint.org/)
+    - [X] [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/)
+- [X] [Material UI](https://mui.com/material-ui/)
+- [X] [Vite](https://vitejs.dev/)
+- [X] [GraphQL](https://graphql.org/)
 
-- Configure the top-level `parserOptions` property like this:
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-};
+## Features
+
+- [X] Home Page
+- [X] Order Page
+- [X] Cart Page
+- [X] Search Page
+  - [X] Pagination
+  - [X] Sort
+  - [X] Filter
+- [X] Login/Signup
+- [X] Detail Item Page
+- [X] Comment Section 
+
+## Installation
+
+Install package with yarn
+
+```bash
+$ yarn install
+```
+    
+## Running the App
+
+
+```bash
+# development
+$ yarn run dev
+
+# build production
+$ yarn run build
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Format
+
+```bash
+# Eslint
+$ yarn run lint
+
+# Prettier
+$ yarn run format
+```
+
+## Author
+
+- [@Erel0251](https://www.github.com/Erel0251)
+
+## Acknowledgements
+
+ - [Rookie to Engineer Program](https://careers.nashtechglobal.com/fresher-program/)
+ - [README.so](https://readme.so/)
+ - [Font Awesome](https://fontawesome.com/)
